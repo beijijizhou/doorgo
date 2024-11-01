@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { LocationType } from '@/app/components/MapService/interface';
+import { LocationType } from '@/app/components/MapService/interfaces';
 import { apiRoutes } from '@/app/utils/routes';
 
 export const fetchDoorfront = async (destination: LocationType) => {

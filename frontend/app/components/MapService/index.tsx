@@ -11,7 +11,6 @@ export default function MapService() {
     lat: 40.7128,
     lng: -74.0060
   };
-  
   return (
     <div style={{ display: 'flex' }}>
       {defaultLocation && <APIProvider apiKey={API_KEY as string}>
