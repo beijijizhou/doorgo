@@ -4,7 +4,7 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const { sendReview } = require('./review'); // Adjust path if necessary
+const { sendReview } = require('./src/review'); // Adjust path if necessary
 
 app.use(bodyParser.json());
 app.use(cors({ origin: 'http://localhost:3000' }))
