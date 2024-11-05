@@ -1,12 +1,13 @@
 "use client"
 import React, { useState } from 'react';
 import { predefinedClues, ReviewData } from '../interfaces';
-import {  sendReview } from '@/app/api/doorfront/sendReview';
+import { fetchReview, sendReview } from '@/app/api/doorfront/sendReview';
 
 export default function ClueSelector() {
     const [selectedClues, setSelectedClues] = useState<string[]>([]);
     const [additionalDescriptions, setAdditionalDescriptions] = useState<{ [key: string]: string }>({});
     const [review, setReview] = useState<string>("");
+
     // Handle checkbox change
     const handleCheckboxChange = (clue: string): void => {
         setSelectedClues((prevSelected) =>
@@ -42,15 +43,24 @@ export default function ClueSelector() {
     // Handle form submission
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
         event.preventDefault();
+        const location = new google.maps.LatLng(40.7898531, -73.8078768);
 
         // Prepare the data to send to the backend
         const dataToSend: ReviewData = {
             clueDescriptions: additionalDescriptions,
-            review: review,
+            review,
+            location,
         };
+
         await sendReview(dataToSend);
         // Send the data to the backend
     };
+    const handleFetch = async()=>{
+        const location = new google.maps.LatLng(40.7898531, -73.8078768);
+        await fetchReview(location);
+        console.log("Fetching data...");
+
+    }
 
     return (
         <div >
@@ -93,14 +103,23 @@ export default function ClueSelector() {
                         />
                     </label>
                 </div>
-                <button
-                    type="submit"
-                    className="px-4 py-2 bg-blue-500 text-white font-semibold">
-                    Submit
-                </button>
+                <div className="flex justify-between">
+                    <button
+                        type="submit"
+                        className="px-4 py-2 bg-blue-500 text-white font-semibold">
+                        Submit
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleFetch}
+                        className="px-4 py-2 bg-blue-500 text-white font-semibold">
+                        Fetch
+                    </button>
+                </div>
 
-            </form>
-        </div>
+            </form >
+
+        </div >
 
     );
 };

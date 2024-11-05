@@ -1,11 +1,10 @@
-// import MapService from "./components/MapService";
-import Review from "./components/Review";
+import MapService from "./components/MapService";
+// import Review from "./components/Review";
 export default function Home() {
   return (
     <div>
 
-      {/* <MapService></MapService> */}
-      <Review></Review>
+      <MapService></MapService>
     </div>
   );
 }

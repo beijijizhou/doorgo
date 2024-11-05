@@ -1,4 +1,4 @@
 // review/index.ts
-import { sendReview } from './review.controller';
+import { saveReview } from './review.controller';
 
-module.exports = { sendReview };
+module.exports = { saveReview };
