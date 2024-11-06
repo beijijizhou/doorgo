@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from 'react';
 import { predefinedClues, ReviewData } from '../interfaces';
-import { fetchReview, sendReview } from '@/app/api/doorfront/sendReview';
+import { fetchReviews, sendReview } from '@/app/api/review/reviewAPI';
 
 export default function ClueSelector() {
     const [selectedClues, setSelectedClues] = useState<string[]>([]);
@@ -55,9 +55,9 @@ export default function ClueSelector() {
         await sendReview(dataToSend);
         // Send the data to the backend
     };
-    const handleFetch = async()=>{
+    const handleFetch = async () => {
         const location = new google.maps.LatLng(40.7898531, -73.8078768);
-        await fetchReview(location);
+        await fetchReviews(location);
         console.log("Fetching data...");
 
     }

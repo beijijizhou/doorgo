@@ -4,15 +4,12 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import { saveReview } from './src/review/review.controller';
+import { reviewRoutes } from './src/review/review.routes';
 app.use(bodyParser.json());
 app.use(cors({ origin: 'http://localhost:3000' }))
 
-// app.get("/", (req, res) => {
-//   res.send('Hello, World!');
-// });
 
-app.post('/sendReview', saveReview);
+app.use('/review', reviewRoutes);
 
 
 app.listen(PORT, () => {
