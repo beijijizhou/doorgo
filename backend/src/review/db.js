@@ -14,6 +14,7 @@ const createReviewsTable = async () => {
   const query = `
     CREATE TABLE IF NOT EXISTS review (
       id SERIAL PRIMARY KEY,
+      
       clue_descriptions JSONB NOT NULL, 
       review TEXT NOT NULL,       
       likes INTEGER DEFAULT 0,       

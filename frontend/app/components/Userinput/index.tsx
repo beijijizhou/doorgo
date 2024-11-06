@@ -1,20 +1,21 @@
 "use client"
 import React, { useEffect, useState } from "react";
-import { useMapsLibrary } from "@vis.gl/react-google-maps";
+import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import useStore from "../../store";
 export default function Userinput() {
   const { setDestination } = useStore.getState();
   const [inputValue, setInputValue] = useState("");
   const placesLibrary = useMapsLibrary("places");
-  
+  const map = useMap();
   const [service, setService] = useState<google.maps.places.AutocompleteService | null>(null);
   const [predictions, setPredictions] = useState<Array<google.maps.places.QueryAutocompletePrediction> | []>([]);
   const [hoveredIndex, setHoveredIndex] = useState<number>(0);
 
   useEffect(() => {
-    
+
     if (placesLibrary) {
       setService(new placesLibrary.AutocompleteService());
+
     }
   }, [placesLibrary]);
 
@@ -47,7 +48,12 @@ export default function Userinput() {
     place: google.maps.places.QueryAutocompletePrediction
   ) => {
     setInputValue(place.description);
-    setDestination(place.description);
+    setDestination(place.description, map!);
+    //   const placesService = new google.maps.places.PlacesService(map!);
+    //   placesService.getDetails({ placeId: place.place_id }, (details, status) => {
+    //     console.log(details)
+
+    // });
     setPredictions([]);
   };
 
@@ -62,7 +68,7 @@ export default function Userinput() {
   // if (!service) return null;
   return (
     <div  >
-   
+
       <div style={{ marginBottom: "10px" }}>
         <input
           type="text"
@@ -83,14 +89,13 @@ export default function Userinput() {
             {predictions.map((place, index) => (
               <p
                 style={{
-                  maxWidth: '200px',
-                  overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   // whiteSpace: 'nowrap',
                 }}
-                key={place.place_id}
-                className={`suggestion-item ${hoveredIndex === index ? "hover" : ""
-                  }`}
+                key={index}
+                className={`px-4 py-2 w-auto overflow-hidden text-ellipsis cursor-pointer 
+                  ${hoveredIndex === index ? "bg-blue-500 text-white" : "bg-white text-black"} 
+                  hover:bg-blue-300 hover:text-white`}
                 onMouseEnter={() => handleMouseEnter(index)}
                 onMouseLeave={handleMouseLeave}
                 onClick={() => handleSelectedPlace(place)}
@@ -106,13 +111,31 @@ export default function Userinput() {
         <button
           onClick={() => console.log("Search for " + inputValue)}
           style={{
-            width: "100%",
             padding: "10px 15px",
             fontSize: "1rem",
+            backgroundColor: "#5dade2", // Lighter blue background
+            color: "white", // White text
+            border: "none", // Remove border
+            cursor: "pointer", // Pointer cursor on hover
+            transition: "background-color 0.3s ease", 
+            
+         
+          }}
+          className="mx-auto block"
+          onMouseEnter={(e) => {
+            const target = e.target as HTMLButtonElement; // Cast to HTMLButtonElement
+            target.style.backgroundColor = "#2980b9"; // Darker blue on hover
+          }}
+          onMouseLeave={(e) => {
+            const target = e.target as HTMLButtonElement; // Cast to HTMLButtonElement
+            target.style.backgroundColor = "#5dade2"; // Revert to original lighter blue
           }}
         >
           Search
         </button>
+
+
+
       </div>
       <div>
 
