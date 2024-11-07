@@ -12,7 +12,7 @@ export const createNavigationSlice: StateCreator<NavigationSlice, [], []> = (set
     map: null,
     setDestination: (newDestination: LocationType) => {
         set({ destination: newDestination })
-        console.log(newDestination);
+       
         // map.setCenter(newDestination as google.maps.LatLngLiteral);
     },
 });

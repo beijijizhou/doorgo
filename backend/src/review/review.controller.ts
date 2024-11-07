@@ -1,37 +1,51 @@
-// import { fetchReview } from './../../../frontend/app/api/doorfront/sendReview';
-// review.controller.js
-// Adjust path based on your folder structure
- import pg from 'pg';
- const { Pool } = require('pg'); // Use require syntax
+// import { ReviewData } from '@/app/components/Review/interfaces';
+
+import pg from 'pg';
+const { Pool } = require('pg'); // Use require syntax
 
 // Create a new pool of connections to your database
+const pool = new Pool({
+  database: 'door_reviews',
+
+  port: 5432,
+});
 import { Request, Response } from "express";
 export const saveReview = async (req: Request, res: Response) => {
-    const { clueDescriptions, review } = req.body;
-    console.log(clueDescriptions, review)
-    // const pool = new Pool({
-    //     // your database host
-    //    database: 'backup', // replace with your database name
-    //    password: '', // replace with your database password
-    //    port: 5432, // default PostgreSQL port
-    //  });
-    // try {
-    //     // Insert the review into the database
-    //     const query = `
-    //       INSERT INTO reviews (clue_descriptions, review)
-    //       VALUES ($1, $2)
-    //       RETURNING id;
-    //     `;
-    //     const values = [clueDescriptions, review];
 
-    //     const result = await pool.query(query, values);
+  const { clueDescriptions, review, location } = req.body;
+  console.log(clueDescriptions, review, location)
+  const client = await pool.connect();
+  try {
+    // Insert location if it doesn't exist
+    const insertLocationQuery = `
+        INSERT INTO locations (place_id, lat, lng, formatted_address, name)
+        VALUES ($1, $2, $3, $4, $5)
+        ON CONFLICT (place_id) DO NOTHING
+      `;
+    await client.query(insertLocationQuery, [
+      location.place_id,
+      location.lat,
+      location.lng,
+      location.formatted_address,
+      location.name,
+    ]);
 
-    //     // Return the id of the newly created review
-    //     res.status(201).send({ message: "Review saved successfully", id: result.rows[0].id });
-    //   } catch (err) {
-    //     console.error('Error saving review:', err);
-    //     res.status(500).send({ message: "Error saving review" });
-    //   }
+    // Insert review
+    const insertReviewQuery = `
+        INSERT INTO reviews (place_id, clue_descriptions, review)
+        VALUES ($1, $2, $3)
+      `;
+    await client.query(insertReviewQuery, [
+      location.place_id,
+      JSON.stringify(clueDescriptions),  // convert to JSON
+      review,
+    ]);
+    res.status(200).json({ message: "Review saved successfully!" });
+  } catch (error) {
+    res.status(500).json({ message: "An error occurred while saving the review." });
+
+  }
+
 };
 
 export const fetchAllReviews = async (req: Request, res: Response) => {

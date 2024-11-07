@@ -4,9 +4,9 @@ import { apiRoutes } from '../../utils/routes';
 import { ReviewData } from '@/app/components/Review/interfaces';
 
 export const sendReview = async (data: ReviewData) => {
-   
+    
     const response = await axios.post(`${apiRoutes.SEND_REVIEW}/`, data);
-    console.log(data.location.lat);
+   
    
     return response.data;
 };

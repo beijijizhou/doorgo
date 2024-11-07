@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 import React, { useState } from 'react';
 import { predefinedClues, ReviewData } from '../interfaces';
@@ -57,7 +58,7 @@ export default function ClueSelector() {
         // Send the data to the backend
     };
     const handleFetch = async () => {
-        const location = new google.maps.LatLng(40.7898531, -73.8078768);
+        // const location = new google.maps.LatLng(40.7898531, -73.8078768);
         // await fetchReviews(location);
         // console.log("Fetching data...");
 
