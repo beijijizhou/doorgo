@@ -1,17 +1,18 @@
 import { StateCreator } from 'zustand';
-type locationType = string | google.maps.LatLngLiteral | google.maps.LatLng | google.maps.Place
+import { LocationType } from './interfaces';
+
 export interface NavigationSlice {
-    
-    destination:string | google.maps.LatLngLiteral | google.maps.LatLng | google.maps.Place,
-    setDestination: (newDestination: locationType,map:google.maps.Map) => void;
-    
+
+    destination: LocationType | null,
+    setDestination: (newDestination: LocationType) => void;
+
 }
 export const createNavigationSlice: StateCreator<NavigationSlice, [], []> = (set) => ({
-    destination:"",
-    map: null, 
-    setDestination: (newDestination: locationType) => {
-        set({ destination: newDestination})
-        console.log(newDestination)
+    destination: null,
+    map: null,
+    setDestination: (newDestination: LocationType) => {
+        set({ destination: newDestination })
+        console.log(newDestination);
         // map.setCenter(newDestination as google.maps.LatLngLiteral);
-      },
-  });
+    },
+});

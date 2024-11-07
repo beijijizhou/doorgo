@@ -16,7 +16,7 @@ export default function MapService() {
   return (
     <div >
       {defaultLocation && <APIProvider apiKey={API_KEY as string}>
-      {/* <Review></Review> */}
+      <Review></Review>
       <Userinput></Userinput>
         <Map
           style={{ width: '90vw', height: '90vh' }}

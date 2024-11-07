@@ -2,8 +2,9 @@
 import React, { useState } from 'react';
 import { predefinedClues, ReviewData } from '../interfaces';
 import { fetchReviews, sendReview } from '@/app/api/review/reviewAPI';
-
+import useStore from '@/app/store';
 export default function ClueSelector() {
+    const {destination} = useStore.getState();
     const [selectedClues, setSelectedClues] = useState<string[]>([]);
     const [additionalDescriptions, setAdditionalDescriptions] = useState<{ [key: string]: string }>({});
     const [review, setReview] = useState<string>("");
@@ -43,22 +44,22 @@ export default function ClueSelector() {
     // Handle form submission
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
         event.preventDefault();
-        const location = new google.maps.LatLng(40.7898531, -73.8078768);
+       
 
         // Prepare the data to send to the backend
         const dataToSend: ReviewData = {
             clueDescriptions: additionalDescriptions,
             review,
-            location,
+            location:destination!,
         };
-
+        // console.log(dataToSend)
         await sendReview(dataToSend);
         // Send the data to the backend
     };
     const handleFetch = async () => {
         const location = new google.maps.LatLng(40.7898531, -73.8078768);
-        await fetchReviews(location);
-        console.log("Fetching data...");
+        // await fetchReviews(location);
+        // console.log("Fetching data...");
 
     }
 

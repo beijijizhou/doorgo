@@ -2,25 +2,26 @@
 import React, { useEffect, useState } from "react";
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import useStore from "../../store";
+import { LocationType } from "@/app/store/interfaces";
 export default function Userinput() {
   const { setDestination } = useStore.getState();
   const [inputValue, setInputValue] = useState("");
   const placesLibrary = useMapsLibrary("places");
   const map = useMap();
-  const [service, setService] = useState<google.maps.places.AutocompleteService | null>(null);
+  const [autoComplete, setAutoComplete] = useState<google.maps.places.AutocompleteService | null>(null);
   const [predictions, setPredictions] = useState<Array<google.maps.places.QueryAutocompletePrediction> | []>([]);
   const [hoveredIndex, setHoveredIndex] = useState<number>(0);
-
+  const [placesService, setPalcesService] = useState<google.maps.places.PlacesService | null>(null);
   useEffect(() => {
 
     if (placesLibrary) {
-      setService(new placesLibrary.AutocompleteService());
-
+      setAutoComplete(new placesLibrary.AutocompleteService());
+      setPalcesService(new google.maps.places.PlacesService(map!)) 
     }
-  }, [placesLibrary]);
+  }, [placesLibrary,map]);
 
   const updatePredictions = (inputValue: string) => {
-    if (!service || inputValue.length === 0) {
+    if (!autoComplete || inputValue.length === 0) {
       setPredictions([]);
       return;
     }
@@ -33,7 +34,7 @@ export default function Userinput() {
       input: inputValue,
       bounds: newYorkBounds,
     };
-    service.getQueryPredictions(request, (res) => {
+    autoComplete.getQueryPredictions(request, (res) => {
       setPredictions(res || []);
     });
   };
@@ -48,13 +49,8 @@ export default function Userinput() {
     place: google.maps.places.QueryAutocompletePrediction
   ) => {
     setInputValue(place.description);
-    setDestination(place.description, map!);
-    //   const placesService = new google.maps.places.PlacesService(map!);
-    //   placesService.getDetails({ placeId: place.place_id }, (details, status) => {
-    //     console.log(details)
-
-    // });
-    setPredictions([]);
+    handleSearch(place.description);
+    
   };
 
   const handleMouseEnter = (index: number) => {
@@ -64,7 +60,28 @@ export default function Userinput() {
   const handleMouseLeave = () => {
     setHoveredIndex(-1);
   };
+  const handleSearch = (destination?:string)=>{
+    
+    const searchValue = destination || inputValue;
+    const request = { query: searchValue };
 
+    placesService?.textSearch(request, (results, status) => {
+      if (status === google.maps.places.PlacesServiceStatus.OK) {
+        const result = results![0];
+        const newDestination: LocationType = {
+          lat: result.geometry!.location!.lat(),
+          lng: result.geometry!.location!.lng(),
+          formatted_address: result.formatted_address! || "",
+          name: result.name || "",
+          place_id: result.place_id || "",
+        };
+        setDestination(newDestination);
+      }else {
+        console.error("Text search failed with status:", status);
+      }
+    });
+    setPredictions([]);
+  }
   // if (!service) return null;
   return (
     <div  >
@@ -109,7 +126,7 @@ export default function Userinput() {
 
       <div>
         <button
-          onClick={() => console.log("Search for " + inputValue)}
+          onClick={()=>handleSearch()}
           style={{
             padding: "10px 15px",
             fontSize: "1rem",
