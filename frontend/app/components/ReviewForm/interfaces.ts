@@ -1,4 +1,3 @@
-import { LocationType } from "@/app/store/interfaces";
 
 export const predefinedClues: string[] = [
     'Near a Park',
@@ -12,8 +11,3 @@ export const predefinedClues: string[] = [
     'Close to a Community Center'
 ];
 
-export interface ReviewData {
-    clueDescriptions: { [key: string]: string }; // Object with clues as keys and descriptions as values
-    review: string;
-    location: LocationType,
-}

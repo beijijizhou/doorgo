@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 import React, { useState } from 'react';
-import { predefinedClues, ReviewData } from '../interfaces';
+import { predefinedClues} from '../interfaces';
 import { fetchReviews, sendReview } from '@/app/api/review/reviewAPI';
 import useStore from '@/app/store';
+import { ReviewData } from '@/app/store/interfaces';
 export default function ClueSelector() {
-    const {destination} = useStore.getState();
+    const { destination } = useStore.getState();
     const [selectedClues, setSelectedClues] = useState<string[]>([]);
     const [additionalDescriptions, setAdditionalDescriptions] = useState<{ [key: string]: string }>({});
     const [review, setReview] = useState<string>("");
@@ -45,13 +46,13 @@ export default function ClueSelector() {
     // Handle form submission
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
         event.preventDefault();
-       
+
 
         // Prepare the data to send to the backend
         const dataToSend: ReviewData = {
             clueDescriptions: additionalDescriptions,
             review,
-            location:destination!,
+            location: destination!,
         };
         // console.log(dataToSend)
         await sendReview(dataToSend);
@@ -59,7 +60,7 @@ export default function ClueSelector() {
     };
     const handleFetch = async () => {
         // const location = new google.maps.LatLng(40.7898531, -73.8078768);
-        // await fetchReviews(location);
+        await fetchReviews(destination!);
         // console.log("Fetching data...");
 
     }
@@ -67,7 +68,8 @@ export default function ClueSelector() {
     return (
         <div >
             <form onSubmit={handleSubmit}>
-                <h2>Select Clues</h2>
+            <h1 className="text-5xl font-bold">Review Form</h1>
+            <h2>Select Clues</h2>
                 {predefinedClues.map((clue, index) => (
                     <div key={index}>
                         <label>
@@ -111,12 +113,7 @@ export default function ClueSelector() {
                         className="px-4 py-2 bg-blue-500 text-white font-semibold">
                         Submit
                     </button>
-                    <button
-                        type="button"
-                        onClick={handleFetch}
-                        className="px-4 py-2 bg-blue-500 text-white font-semibold">
-                        Fetch
-                    </button>
+
                 </div>
 
             </form >

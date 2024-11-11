@@ -5,6 +5,7 @@ const PORT = process.env.PORT || 8000;
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { reviewRoutes } from './src/review/review.routes';
+app.use(express.json());
 app.use(bodyParser.json());
 app.use(cors({ origin: 'http://localhost:3000' }))
 

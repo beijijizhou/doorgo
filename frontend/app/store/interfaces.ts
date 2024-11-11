@@ -5,3 +5,9 @@ export interface LocationType {
     name: string | undefined;
     place_id:google.maps.places.PlaceResult["place_id"]| undefined,
 }
+export interface ReviewData {
+    clueDescriptions: { [key: string]: string }; // Object with clues as keys and descriptions as values
+    review: string;
+    location: LocationType,
+    likes?:number | 0,
+}

@@ -1,10 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 import React, { useEffect, useState } from "react";
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import useStore from "../../store";
 import { LocationType } from "@/app/store/interfaces";
+import ReviewList from "../ReviewList";
+import { fetchReviews } from "@/app/api/review/reviewAPI";
 export default function Userinput() {
-  const { setDestination } = useStore.getState();
+  const { setDestination, setReviewList} = useStore.getState();
   const [inputValue, setInputValue] = useState("");
   const placesLibrary = useMapsLibrary("places");
   const map = useMap();
@@ -16,9 +19,9 @@ export default function Userinput() {
 
     if (placesLibrary) {
       setAutoComplete(new placesLibrary.AutocompleteService());
-      setPalcesService(new google.maps.places.PlacesService(map!)) 
+      setPalcesService(new google.maps.places.PlacesService(map!))
     }
-  }, [placesLibrary,map]);
+  }, [placesLibrary, map]);
 
   const updatePredictions = (inputValue: string) => {
     if (!autoComplete || inputValue.length === 0) {
@@ -50,7 +53,7 @@ export default function Userinput() {
   ) => {
     setInputValue(place.description);
     handleSearch(place.description);
-    
+
   };
 
   const handleMouseEnter = (index: number) => {
@@ -60,14 +63,16 @@ export default function Userinput() {
   const handleMouseLeave = () => {
     setHoveredIndex(-1);
   };
-  const handleSearch = (destination?:string)=>{
-    
-    const searchValue = destination || inputValue;
-    const request = { query: searchValue };
+  const handleSearch = (destination?: string) => {
 
-    placesService?.textSearch(request, (results, status) => {
+    const searchValue = destination || inputValue;
+    // const searchValue = "bmcc"
+    const request = { query: searchValue };
+    
+    placesService?.textSearch(request, async (results, status) => {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
         const result = results![0];
+        console.log(result)
         const newDestination: LocationType = {
           lat: result.geometry!.location!.lat(),
           lng: result.geometry!.location!.lng(),
@@ -76,16 +81,21 @@ export default function Userinput() {
           place_id: result.place_id || "",
         };
         setDestination(newDestination);
-      }else {
+        // await fetchReviews(newDestination);
+
+      } else {
         console.error("Text search failed with status:", status);
       }
     });
     setPredictions([]);
   }
-  // if (!service) return null;
+  const handleFetch = async ()=>{
+    // fetchReviews();
+    setReviewList();
+  }
   return (
     <div  >
-
+      {<ReviewList />}
       <div style={{ marginBottom: "10px" }}>
         <input
           type="text"
@@ -126,7 +136,7 @@ export default function Userinput() {
 
       <div>
         <button
-          onClick={()=>handleSearch()}
+          onClick={() => handleSearch()}
           style={{
             padding: "10px 15px",
             fontSize: "1rem",
@@ -134,9 +144,9 @@ export default function Userinput() {
             color: "white", // White text
             border: "none", // Remove border
             cursor: "pointer", // Pointer cursor on hover
-            transition: "background-color 0.3s ease", 
-            
-         
+            transition: "background-color 0.3s ease",
+
+
           }}
           className="mx-auto block"
           onMouseEnter={(e) => {
@@ -150,7 +160,12 @@ export default function Userinput() {
         >
           Search
         </button>
-
+        <button
+          type="button"
+          onClick={handleFetch}
+          className="px-4 py-2 bg-blue-500 text-white font-semibold">
+          Fetch
+        </button>
 
 
       </div>
