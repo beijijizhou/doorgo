@@ -9,12 +9,12 @@ const ReviewList = () => {
   useEffect(() => {
     // setReviewList(); 
     console.log(reviewList)
-    
+    console.log(reviewList.length > 0)
     // Fetch reviews when component mounts
   }, [reviewList]);
 
 
-  const handleLike = async (place_id: string) => {
+  const handleLike = async () => {
     // await likeReview(place_id);
   }
 
@@ -24,12 +24,12 @@ const ReviewList = () => {
         {reviewList.length > 0 && (
           <>
             <h2>Review</h2> {/* Display this only if there are reviews */}
-            {reviewList.map((review) => (
-              <div key={review.location.place_id} className="review-item">
+            {reviewList.map((review, index) => (
+              <div key={index} className="review-item">
                 <h3>{review.clueDescriptions.clue1}</h3>
                 <p>{review.review}</p>
                 <p>Likes: {review.likes}</p>
-                <button onClick={() => handleLike(review.location.place_id!)}>Like</button>
+                <button onClick={() => handleLike()}>Like</button>
               </div>
             ))}
           </>

@@ -1,82 +1,67 @@
-// import { ReviewData } from '@/app/components/Review/interfaces';
+import { Request, Response } from 'express';
+import Review from './review.model'; // Import Review model
+import Location from '../location/location.model'; // Import Location model
 
-import pg from 'pg';
-const { Pool } = require('pg'); // Use require syntax
-
-// Create a new pool of connections to your database
-const pool = new Pool({
-  database: 'door_reviews',
-  port: 5432,
-});
-import { Request, Response } from "express";
 export const saveReview = async (req: Request, res: Response) => {
-
-  const { clueDescriptions, review, location } = req.body;
-  console.log(clueDescriptions, review, location)
-  const client = await pool.connect();
+  console.log("received")
+  const { geolocation, reviewData } = req.body;
+  const { clueDescriptions, review } = reviewData;
+  console.log(req.body)
+  console.log(reviewData)
+  console.log(clueDescriptions, review)
   try {
-    // Insert location if it doesn't exist
-    const insertLocationQuery = `
-        INSERT INTO locations (place_id, lat, lng, formatted_address, name)
-        VALUES ($1, $2, $3, $4, $5)
-        ON CONFLICT (place_id) DO NOTHING
-      `;
-    await client.query(insertLocationQuery, [
-      location.place_id,
-      location.lat,
-      location.lng,
-      location.formatted_address,
-      location.name,
-    ]);
+    // Create a new review document
+    const newReview = await Review.create({ clueDescriptions, review });
+    // Try to find the location in the Location collection
+    let locationDoc = await Location.findOne({
+      lat: geolocation.lat,
+      lng: geolocation.lng,
+    });
 
-    // Insert review
-    const insertReviewQuery = `
-        INSERT INTO reviews (place_id, clue_descriptions, review)
-        VALUES ($1, $2, $3)
-      `;
-    await client.query(insertReviewQuery, [
-      location.place_id,
-      JSON.stringify(clueDescriptions),  // convert to JSON
-      review,
-    ]);
-    res.status(200).json({ message: "Review saved successfully!" });
-  } catch (error) {
-    res.status(500).json({ message: "An error occurred while saving the review." });
-
-  }
-
-};
-
-export const fetchAllReviews = async (req: Request, res: Response) :Promise<any>=> {
-  console.log("Request body:", req.body);
-  const { location } = req.body;
-  console.log("Location:", location);
-  const { place_id} = location;
-
-  try {
-    // Query to fetch all reviews with the given place_id
-    const reviewsQuery = `
-      SELECT *
-      FROM reviews r
-      INNER JOIN locations l ON r.place_id = l.place_id
-      WHERE l.place_id = $1
-    `;
-
-    const result = await pool.query(reviewsQuery, [place_id]);
-
-    // Check if any reviews were found
-    if (result.rows.length === 0) {
-      return res.status(404).json({ message: "No reviews found for this location" });
+    if (locationDoc) {
+      // If the location exists, add the new review's ObjectId to the reviews array
+      locationDoc.reviewHistory.push(newReview._id);
+      await locationDoc.save();
+    } else {
+      // If the location doesn't exist, create a new location document with the review
+      locationDoc = await Location.create({
+        ...geolocation,
+        reviewHistory: [newReview._id],
+      });
     }
 
-    // Return the fetched reviews
-    res.status(200).json({ reviews: result.rows, message: "Data fetched successfully!" });
+    res.status(201).json({
+      message: 'Review saved successfully',
+      review: newReview,
+      location: locationDoc,
+    });
   } catch (error) {
-    console.error("Error fetching reviews:", error);
-    res.status(500).json({ message: "Error fetching reviews" });
+    console.error(error);
+    res.status(500).json({ message: 'Error saving review', error });
   }
-}
+};
 
+export const fetchAllReviews = async (req: Request, res: Response) => {
+  try {
+    const { geolocation } = req.body;
+    console.log(geolocation)
+    // Find the location by latitude and longitude
+    const locationDoc = await Location.findOne({
+      lat: geolocation.lat,
+      lng: geolocation.lng,
+    }).populate('reviewHistory'); 
+
+    if (!locationDoc) {
+       res.status(404).json({ message: 'Location not found' });
+       return 
+    }
+    // Return the reviews associated with the location
+    res.status(200).json({ reviewHistory: locationDoc.reviewHistory});
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
 module.exports = {
   saveReview,
   fetchAllReviews,

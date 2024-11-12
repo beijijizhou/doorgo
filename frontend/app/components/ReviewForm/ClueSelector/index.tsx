@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 import React, { useState } from 'react';
-import { predefinedClues} from '../interfaces';
+import { predefinedClues } from '../interfaces';
 import { fetchReviews, sendReview } from '@/app/api/review/reviewAPI';
 import useStore from '@/app/store';
-import { ReviewData } from '@/app/store/interfaces';
+import { LocationData, ReviewData } from '@/app/store/interfaces';
 export default function ClueSelector() {
-    const { destination } = useStore.getState();
+    const { destinationData } = useStore.getState();
     const [selectedClues, setSelectedClues] = useState<string[]>([]);
     const [additionalDescriptions, setAdditionalDescriptions] = useState<{ [key: string]: string }>({});
     const [review, setReview] = useState<string>("");
@@ -49,18 +49,19 @@ export default function ClueSelector() {
 
 
         // Prepare the data to send to the backend
-        const dataToSend: ReviewData = {
+        const newReview: ReviewData = {
             clueDescriptions: additionalDescriptions,
             review,
-            location: destination!,
+            // location: destination!,
         };
+        destinationData!.reviewData = newReview
         // console.log(dataToSend)
-        await sendReview(dataToSend);
+        await sendReview(destinationData!);
         // Send the data to the backend
     };
     const handleFetch = async () => {
         // const location = new google.maps.LatLng(40.7898531, -73.8078768);
-        await fetchReviews(destination!);
+        // await fetchReviews(destinationData!.geolocation);
         // console.log("Fetching data...");
 
     }
@@ -68,8 +69,8 @@ export default function ClueSelector() {
     return (
         <div >
             <form onSubmit={handleSubmit}>
-            <h1 className="text-5xl font-bold">Review Form</h1>
-            <h2>Select Clues</h2>
+                <h1 className="text-5xl font-bold">Review Form</h1>
+                <h2>Select Clues</h2>
                 {predefinedClues.map((clue, index) => (
                     <div key={index}>
                         <label>

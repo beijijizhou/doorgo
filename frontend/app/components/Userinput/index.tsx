@@ -3,11 +3,10 @@
 import React, { useEffect, useState } from "react";
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import useStore from "../../store";
-import { LocationType } from "@/app/store/interfaces";
+import { Geolocation } from "@/app/store/interfaces";
 import ReviewList from "../ReviewList";
-import { fetchReviews } from "@/app/api/review/reviewAPI";
 export default function Userinput() {
-  const { setDestination, setReviewList} = useStore.getState();
+  const { setDestination, setReviewList } = useStore.getState();
   const [inputValue, setInputValue] = useState("");
   const placesLibrary = useMapsLibrary("places");
   const map = useMap();
@@ -68,19 +67,20 @@ export default function Userinput() {
     const searchValue = destination || inputValue;
     // const searchValue = "bmcc"
     const request = { query: searchValue };
-    
+
     placesService?.textSearch(request, async (results, status) => {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
         const result = results![0];
         console.log(result)
-        const newDestination: LocationType = {
+        const newDestination: Geolocation = {
           lat: result.geometry!.location!.lat(),
           lng: result.geometry!.location!.lng(),
           formatted_address: result.formatted_address! || "",
           name: result.name || "",
           place_id: result.place_id || "",
+
         };
-        setDestination(newDestination);
+        // setDestination(newDestination);
         // await fetchReviews(newDestination);
 
       } else {
@@ -89,8 +89,7 @@ export default function Userinput() {
     });
     setPredictions([]);
   }
-  const handleFetch = async ()=>{
-    // fetchReviews();
+  const handleFetch = async () => {
     setReviewList();
   }
   return (
