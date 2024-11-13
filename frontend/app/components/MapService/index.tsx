@@ -3,7 +3,7 @@
 import { APIProvider, Map, } from '@vis.gl/react-google-maps';
 import React from 'react'
 import Userinput from '../Userinput/index';
-import ReviewForm from '../ReviewForm';
+import ReviewHistory from '../ReviewHistory';
 export default function MapService() {
   const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const MAP_ID = "ID";
@@ -16,14 +16,19 @@ export default function MapService() {
   return (
     <div >
       {defaultLocation && <APIProvider apiKey={API_KEY as string}>
-        <ReviewForm></ReviewForm>
         <Userinput></Userinput>
-        <Map
-          style={{ width: '90vw', height: '90vh' }}
-          defaultCenter={defaultLocation}
-          defaultZoom={zoomLevel}
-          mapId={MAP_ID}
-        />
+        <div style={{ display: 'flex', width: '100vw', height: '90vh' }}>
+          <Map
+            style={{ flex: 7, width: '100%', height: '100%' }}  // Use flex number, width and height to fill available space
+            defaultCenter={defaultLocation}
+            defaultZoom={zoomLevel}
+            mapId={MAP_ID}
+          />
+          <div style={{ flex: 3, padding: '10px', overflowY: 'auto', backgroundColor: '#f5f5f5' }}>
+            <ReviewHistory />
+          </div>
+        </div>
+
 
 
       </APIProvider>}

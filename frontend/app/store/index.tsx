@@ -1,8 +1,8 @@
-import { createNavigationSlice, NavigationSlice } from './useNavigationSlice';
+import { createReviewSlice, ReviewSlice } from './useReviewSlice';
 import { create } from 'zustand';
 
-const useStore = create<NavigationSlice >()((...a) => ({
-  ...createNavigationSlice(...a),
-  
+const useStore = create<ReviewSlice>()((...a) => ({
+  ...createReviewSlice(...a),
+
 }))
 export default useStore;

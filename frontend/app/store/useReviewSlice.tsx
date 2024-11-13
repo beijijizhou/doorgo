@@ -13,38 +13,41 @@ const defaultDestinationData: LocationData = {
     geolocation,
     reviewHistory: [],
 }
-export interface NavigationSlice {
+export interface ReviewSlice {
     destinationData: LocationData | null,
-    reviewList: ReviewData[] | [],
     setDestination: (newDestination: Geolocation) => void;
-    setReviewList: () => void;
+    setReviewHistory: () => void;
     updateReview: (review: ReviewData) => void;
 }
 
-export const createNavigationSlice: StateCreator<NavigationSlice, [], []> = (set, get) => ({
+export const createReviewSlice: StateCreator<ReviewSlice, [], []> = (set, get) => ({
     destinationData: defaultDestinationData,
     map: null,
-    reviewList: [],
     setDestination: (newDestination: Geolocation) => {
         // set({ destinationData: newDestination })
         fetchReviewHistory(newDestination);
         // map.setCenter(newDestination as google.maps.LatLngLiteral);
     },
-    setReviewList: async () => {
+    setReviewHistory: async () => {
         const { destinationData } = get()
         const data = await fetchReviewHistory(destinationData!.geolocation)
-        set({ reviewList: data.reviewHistory });
+        set({
+            destinationData: {
+                ...destinationData!,
+                reviewHistory: data.reviewHistory,
+            },
+        });
     },
     updateReview: async (updatedReview: ReviewData) => {
         const response = await updateReview(updatedReview);
-
         if (response.success) {
-            
             set((state) => ({
-                reviewList: state.reviewList.map((review) =>
-                    
-                    review._id === updatedReview._id ? updatedReview : review
-                ),
+                destinationData: {
+                    ...state.destinationData!,
+                    reviewHistory: state.destinationData!.reviewHistory.map((review) =>
+                        review._id === updatedReview._id ? updatedReview : review
+                    ),
+                },
             }));
         }
     },

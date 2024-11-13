@@ -14,6 +14,6 @@ export interface LocationData {
 export interface ReviewData {
     clueDescriptions: { [key: string]: string }; // Object with clues as keys and descriptions as values
     review: string;
-    likes: number | 0,
+    likes?: number | 0,
     _id?:string,
 }

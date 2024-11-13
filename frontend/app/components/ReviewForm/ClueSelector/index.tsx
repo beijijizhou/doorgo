@@ -2,7 +2,7 @@
 "use client"
 import React, { useState } from 'react';
 import { predefinedClues } from '../interfaces';
-import { fetchReviewHistory, sendReview } from '@/app/api/review/reviewAPI';
+import { sendReview } from '@/app/api/review/reviewAPI';
 import useStore from '@/app/store';
 import { LocationData, ReviewData } from '@/app/store/interfaces';
 export default function ClueSelector() {
@@ -52,19 +52,14 @@ export default function ClueSelector() {
         const newReview: ReviewData = {
             clueDescriptions: additionalDescriptions,
             review,
-            // location: destination!,
+            likes:0,
         };
         destinationData!.reviewData = newReview
         // console.log(dataToSend)
         await sendReview(destinationData!);
         // Send the data to the backend
     };
-    const handleFetch = async () => {
-        // const location = new google.maps.LatLng(40.7898531, -73.8078768);
-        // await fetchReviews(destinationData!.geolocation);
-        // console.log("Fetching data...");
 
-    }
 
     return (
         <div >

@@ -4,9 +4,9 @@ import React, { useEffect, useState } from "react";
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import useStore from "../../store";
 import { Geolocation } from "@/app/store/interfaces";
-import ReviewList from "../ReviewList";
+import ReviewHistory from "../ReviewHistory";
 export default function Userinput() {
-  const { setDestination, setReviewList } = useStore.getState();
+  const { setReviewHistory: setReviewList } = useStore.getState();
   const [inputValue, setInputValue] = useState("");
   const placesLibrary = useMapsLibrary("places");
   const map = useMap();
@@ -66,12 +66,13 @@ export default function Userinput() {
 
     const searchValue = destination || inputValue;
     // const searchValue = "bmcc"
+    setReviewList();
+    if (!searchValue) return
     const request = { query: searchValue };
 
     placesService?.textSearch(request, async (results, status) => {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
         const result = results![0];
-        console.log(result)
         const newDestination: Geolocation = {
           lat: result.geometry!.location!.lat(),
           lng: result.geometry!.location!.lng(),
@@ -80,6 +81,7 @@ export default function Userinput() {
           place_id: result.place_id || "",
 
         };
+
         // setDestination(newDestination);
         // await fetchReviews(newDestination);
 
@@ -89,12 +91,9 @@ export default function Userinput() {
     });
     setPredictions([]);
   }
-  const handleFetch = async () => {
-    setReviewList();
-  }
+
   return (
     <div  >
-      {<ReviewList />}
       <div style={{ marginBottom: "10px" }}>
         <input
           type="text"
@@ -157,14 +156,9 @@ export default function Userinput() {
             target.style.backgroundColor = "#5dade2"; // Revert to original lighter blue
           }}
         >
-          Search
+          Get Reviews
         </button>
-        <button
-          type="button"
-          onClick={handleFetch}
-          className="px-4 py-2 bg-blue-500 text-white font-semibold">
-          Fetch
-        </button>
+
 
 
       </div>

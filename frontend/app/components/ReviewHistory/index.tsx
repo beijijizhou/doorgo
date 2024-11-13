@@ -1,28 +1,28 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import useStore from "@/app/store";
 import { HandThumbUpIcon } from "@heroicons/react/16/solid";
 import { ReviewData } from "@/app/store/interfaces";
-const ReviewList = () => {
-  const reviewList = useStore((state) => state.reviewList); // Track reviewList with Zustand hook
+const ReviewHistory = () => {
+  const reviewHistory = useStore((state) => state.destinationData!.reviewHistory); // Track reviewList with Zustand hook
   const { updateReview } = useStore.getState()
   useEffect(() => {
-    console.log(reviewList.length > 0 && reviewList[0].likes)
-  }, [reviewList]);
+    console.log(reviewHistory.length > 0 && reviewHistory[0].likes)
+  }, [reviewHistory]);
 
 
-  const handleLike = (reviewData: ReviewData)=>{
+  const handleLike = (reviewData: ReviewData) => {
     reviewData.likes! ++;
-    
+
     updateReview(reviewData);
   }
 
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-semibold">Reviews</h2>
-      {reviewList.length > 0 ? (
-        reviewList.map((review, index) => (
+      {reviewHistory.length > 0 ? (
+        reviewHistory.map((review, index) => (
           <div key={index} className="review-item bg-white p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
             <h3 className="text-lg font-medium">{review.clueDescriptions.clue1}</h3>
             <p className="text-gray-600">{review.review}</p>
@@ -52,4 +52,4 @@ const ReviewList = () => {
   )
 };
 
-export default ReviewList;
+export default ReviewHistory;
