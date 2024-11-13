@@ -3,12 +3,8 @@ import Review from './review.model'; // Import Review model
 import Location from '../location/location.model'; // Import Location model
 
 export const saveReview = async (req: Request, res: Response) => {
-  console.log("received")
   const { geolocation, reviewData } = req.body;
   const { clueDescriptions, review } = reviewData;
-  console.log(req.body)
-  console.log(reviewData)
-  console.log(clueDescriptions, review)
   try {
     // Create a new review document
     const newReview = await Review.create({ clueDescriptions, review });
@@ -41,7 +37,7 @@ export const saveReview = async (req: Request, res: Response) => {
   }
 };
 
-export const fetchAllReviews = async (req: Request, res: Response) => {
+export const fetchReviewHistory = async (req: Request, res: Response) => {
   try {
     const { geolocation } = req.body;
     console.log(geolocation)
@@ -49,20 +45,54 @@ export const fetchAllReviews = async (req: Request, res: Response) => {
     const locationDoc = await Location.findOne({
       lat: geolocation.lat,
       lng: geolocation.lng,
-    }).populate('reviewHistory'); 
+    }).populate('reviewHistory');
 
     if (!locationDoc) {
-       res.status(404).json({ message: 'Location not found' });
-       return 
+      res.status(404).json({ message: 'Location not found' });
+      return
     }
     // Return the reviews associated with the location
-    res.status(200).json({ reviewHistory: locationDoc.reviewHistory});
+    res.status(200).json({ reviewHistory: locationDoc.reviewHistory });
   } catch (error) {
     console.error('Error fetching reviews:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+export const updateReview = async (req: Request, res: Response) => {
+  try {
+    const { reviewData } = req.body;
+    console.log("Received review data:", reviewData, reviewData._id);
+
+    // Use findOneAndUpdate to locate the review by _id and update its data
+    const reviewDoc = await Review.findOneAndUpdate(
+      { _id: reviewData._id }, // Match by review ID
+      {
+        $set: {
+          clueDescriptions: reviewData.clueDescriptions,
+          review: reviewData.review,
+          likes: reviewData.likes
+        }
+      },
+      { new: true } // Return the updated document
+    );
+
+    if (!reviewDoc) {
+      res.status(404).json({ message: 'Review not found' });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Review updated successfully", updatedReview: reviewDoc
+    });
+  } catch (error) {
+    console.error('Error updating review:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
 module.exports = {
   saveReview,
-  fetchAllReviews,
+  fetchReviewHistory,
+  updateReview,
 }

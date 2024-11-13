@@ -2,7 +2,7 @@
 "use client"
 import React, { useState } from 'react';
 import { predefinedClues } from '../interfaces';
-import { fetchReviews, sendReview } from '@/app/api/review/reviewAPI';
+import { fetchReviewHistory, sendReview } from '@/app/api/review/reviewAPI';
 import useStore from '@/app/store';
 import { LocationData, ReviewData } from '@/app/store/interfaces';
 export default function ClueSelector() {

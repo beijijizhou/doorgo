@@ -3,20 +3,19 @@
 import { useState, useEffect } from "react";
 import useStore from "@/app/store";
 import { HandThumbUpIcon } from "@heroicons/react/16/solid";
+import { ReviewData } from "@/app/store/interfaces";
 const ReviewList = () => {
   const reviewList = useStore((state) => state.reviewList); // Track reviewList with Zustand hook
-
+  const { updateReview } = useStore.getState()
   useEffect(() => {
-    // setReviewList(); 
-    console.log(reviewList)
-    console.log(reviewList.length > 0)
-    // Fetch reviews when component mounts
+    console.log(reviewList.length > 0 && reviewList[0].likes)
   }, [reviewList]);
 
 
-  const handleLike = async () => {
-    console.log("press like");
-    // await likeReview(place_id);
+  const handleLike = (reviewData: ReviewData)=>{
+    reviewData.likes! ++;
+    
+    updateReview(reviewData);
   }
 
   return (
@@ -37,15 +36,12 @@ const ReviewList = () => {
                 </div>
               ))}
             </div>
-
-            <p className="mt-2 text-gray-600">Likes: {review.likes}</p>
-
             <button
-              onClick={() => handleLike()}
+              onClick={() => handleLike(review)}
               className="flex items-center mt-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
             >
               <HandThumbUpIcon className="h-5 w-5 mr-2" />
-              Like
+              {review.likes}
             </button>
           </div>
         ))
