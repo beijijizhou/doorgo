@@ -7,7 +7,7 @@ import ReviewHistory from '../ReviewHistory';
 export default function MapService() {
   const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const MAP_ID = "ID";
-  const zoomLevel = 20
+  const zoomLevel = 13
   const defaultLocation = {
     // Default to New York City
     lat: 40.7128,

@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 import React, { useEffect, useState } from "react";
-import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
+import { useMap, useMapsLibrary, AdvancedMarker } from "@vis.gl/react-google-maps";
 import useStore from "../../store";
 import { Geolocation } from "@/app/store/interfaces";
 export default function Userinput() {
-  const { setReviewHistory, setDestination} = useStore.getState();
+  const { setReviewHistory, setDestination } = useStore.getState();
+  const { destinationData } = useStore.getState();
   const [inputValue, setInputValue] = useState("");
   const placesLibrary = useMapsLibrary("places");
   const map = useMap();
@@ -19,7 +20,7 @@ export default function Userinput() {
       setAutoComplete(new placesLibrary.AutocompleteService());
       setPalcesService(new google.maps.places.PlacesService(map!))
     }
-  }, [placesLibrary, map]);
+  }, [placesLibrary, map, destinationData]);
 
   const updatePredictions = (inputValue: string) => {
     if (!autoComplete || inputValue.length === 0) {
@@ -80,9 +81,8 @@ export default function Userinput() {
           place_id: result.place_id || "",
 
         };
-        // console.log(newDestination)
+
         setDestination(newDestination);
-        // await fetchReviews(newDestination);
 
       } else {
         console.error("Text search failed with status:", status);
@@ -93,6 +93,7 @@ export default function Userinput() {
 
   return (
     <div  >
+      <AdvancedMarker position={{lat: destinationData!.geolocation.lat, lng: destinationData!.geolocation.lng}}></AdvancedMarker>
       <div style={{ marginBottom: "10px" }}>
         <input
           type="text"

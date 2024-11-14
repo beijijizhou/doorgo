@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
-import { useEffect } from "react";
 import useStore from "@/app/store";
 import { HandThumbUpIcon } from "@heroicons/react/16/solid";
 import { ReviewData } from "@/app/store/interfaces";
@@ -8,9 +7,7 @@ import ReviewForm from "../ReviewForm";
 const ReviewHistory = () => {
   const reviewHistory = useStore((state) => state.destinationData!.reviewHistory); // Track reviewList with Zustand hook
   const { updateReview } = useStore.getState()
-  useEffect(() => {
-    console.log(reviewHistory.length > 0 && reviewHistory[0].likes)
-  }, [reviewHistory]);
+ 
 
 
   const handleLike = (reviewData: ReviewData) => {

@@ -40,7 +40,6 @@ export default function ClueSelector() {
     };
     const handleReviewChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         const value = event.target.value;
-        console.log(value)
         setReview(value);
     };
     // Handle form submission
@@ -55,7 +54,6 @@ export default function ClueSelector() {
             likes:0,
         };
         destinationData!.reviewData = newReview
-        // console.log(dataToSend)
         await sendReview(destinationData!);
         // Send the data to the backend
     };
