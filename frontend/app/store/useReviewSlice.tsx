@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { StateCreator } from 'zustand';
 import { LocationData, Geolocation, ReviewData } from './interfaces';
 import { fetchReviewHistory, updateReview } from '../api/review/reviewAPI';
@@ -23,10 +24,18 @@ export interface ReviewSlice {
 export const createReviewSlice: StateCreator<ReviewSlice, [], []> = (set, get) => ({
     destinationData: defaultDestinationData,
     map: null,
-    setDestination: (newDestination: Geolocation) => {
+    setDestination: async (newDestination: Geolocation) => {
         // set({ destinationData: newDestination })
-        fetchReviewHistory(newDestination);
-        // map.setCenter(newDestination as google.maps.LatLngLiteral);
+        // console.log(newDestination)
+        // fetchReviewHistory(newDestination);
+        // const data = await fetchReviewHistory(destinationData!.geolocation)
+        const data = await fetchReviewHistory(newDestination)
+        set({
+            destinationData: {
+                geolocation: newDestination,
+                reviewHistory: data.reviewHistory,
+            },
+        });
     },
     setReviewHistory: async () => {
         const { destinationData } = get()

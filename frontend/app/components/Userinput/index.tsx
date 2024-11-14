@@ -4,9 +4,8 @@ import React, { useEffect, useState } from "react";
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import useStore from "../../store";
 import { Geolocation } from "@/app/store/interfaces";
-import ReviewHistory from "../ReviewHistory";
 export default function Userinput() {
-  const { setReviewHistory: setReviewList } = useStore.getState();
+  const { setReviewHistory, setDestination} = useStore.getState();
   const [inputValue, setInputValue] = useState("");
   const placesLibrary = useMapsLibrary("places");
   const map = useMap();
@@ -64,9 +63,9 @@ export default function Userinput() {
   };
   const handleSearch = (destination?: string) => {
 
-    const searchValue = destination || inputValue;
-    // const searchValue = "bmcc"
-    setReviewList();
+    // const searchValue = destination || inputValue;
+    const searchValue = "bmcc"
+    // setReviewHistory();
     if (!searchValue) return
     const request = { query: searchValue };
 
@@ -81,8 +80,8 @@ export default function Userinput() {
           place_id: result.place_id || "",
 
         };
-
-        // setDestination(newDestination);
+        // console.log(newDestination)
+        setDestination(newDestination);
         // await fetchReviews(newDestination);
 
       } else {
