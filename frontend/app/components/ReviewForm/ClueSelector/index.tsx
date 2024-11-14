@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { predefinedClues } from '../interfaces';
 import { sendReview } from '@/app/api/review/reviewAPI';
 import useStore from '@/app/store';
-import { LocationData, ReviewData } from '@/app/store/interfaces';
+import { ReviewData } from '@/app/store/interfaces';
 export default function ClueSelector() {
     const { destinationData } = useStore.getState();
     const [selectedClues, setSelectedClues] = useState<string[]>([]);
