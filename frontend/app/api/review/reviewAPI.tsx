@@ -11,6 +11,7 @@ export const sendReview = async (data: LocationData) => {
 export const fetchReviewHistory = async (geolocation: Geolocation) => {
 
     const response = await axios.post(apiRoutes.FETCH_REVIEW_HISTORY, { geolocation });
+    console.log(response.data)
     return response.data;
 };
 

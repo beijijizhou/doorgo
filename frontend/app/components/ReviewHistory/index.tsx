@@ -7,30 +7,45 @@ import ReviewForm from "../ReviewForm";
 const ReviewHistory = () => {
   const reviewHistory = useStore((state) => state.destinationData!.reviewHistory); // Track reviewList with Zustand hook
   const { updateReview } = useStore.getState()
- 
+
 
 
   const handleLike = (reviewData: ReviewData) => {
     reviewData.likes! ++;
-
     updateReview(reviewData);
   }
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-semibold">Reviews</h2>
       {reviewHistory.length > 0 ? (
+
         <div>
+          <h2 className="text-2xl font-semibold">{reviewHistory.length} Reviews</h2>
+
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <select
+                className="bg-white border border-gray-300 text-gray-700 rounded-md p-2"
+              // onChange={handleSortChange} // You can define the function to handle sorting
+              >
+                <option value="likes">Sort by Likes</option>
+                <option value="time">Sort by Time Relevance</option>
+              </select>
+            </div>
+
+          </div>
+
+
           {reviewHistory.map((reviewData, index) => (
-            <div key={index} className="review-item bg-white p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
-              <h3 className="text-lg font-medium">{reviewData.clueDescriptions.clue1}</h3>
+            <div key={index} className="review-item bg-white p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow m-4">
+              <h3 className="text-lg font-medium text-blue-600" >Review:</h3>
               <p className="text-gray-600">{reviewData.review}</p>
 
-              {/* Display clue descriptions */}
-              <div className="clue-descriptions mt-4">
+              <h3 className="text-lg font-medium text-blue-600 mt-2">Address Clue Descriptions</h3>
+              <div className="clue-descriptions ">
                 {Object.entries(reviewData.clueDescriptions).map(([clue, description]) => (
-                  <div key={clue} className="clue-description mb-2">
-                    <p className="font-semibold text-sm text-blue-500">{clue}:</p>
+                  <div key={clue} className="clue-description flex items-center space-x-2">
+                    <p className="font-semibold text-sm ">{clue}:</p>
                     <p className="text-sm text-gray-700">{description}</p>
                   </div>
                 ))}

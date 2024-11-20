@@ -48,13 +48,15 @@ export const fetchReviewHistory = async (req: Request, res: Response) => {
   try {
     const { geolocation } = req.body;
     // Find the location by latitude and longitude
+    console.log(geolocation)
     let locationDoc = await Location.findOne({
       "geoCoordinates.coordinates": [geolocation.lng, geolocation.lat], // Update to match the coordinates schema
     }).populate('reviewHistory');
-  
+    console.log("find exaction location", locationDoc);
+    
     if (!locationDoc) {
-      const nearbyLocations = await findLocationByProximity(40.7656066, -73.9553663);
-      // console.log(nearbyLocations)
+      const nearbyLocations = await findLocationByProximity(geolocation.lat, geolocation.lng);
+      console.log("find close location", nearbyLocations);
       if (!nearbyLocations.length) {
         res.status(404).json({ message: 'Location not found' });
         return;
@@ -82,14 +84,13 @@ export const findLocationByProximity = async (lat: number, lng: number) => {
             type: 'Point',
             coordinates: [lng, lat],
           },
-          $maxDistance: 5, // Adjust this distance (in meters) as needed
+          $maxDistance: 100000, // Adjust this distance (in meters) as needed
         },
       },
     };
     
     // Find and return up to 5 nearby locations
     const results = await Location.find(query).limit(5).populate("reviewHistory");
-    
     return results;
   } catch (error) {
     console.error('Error in proximity search:', error);

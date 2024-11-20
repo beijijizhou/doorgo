@@ -10,7 +10,7 @@ const seedDatabase = async () => {
     // Clear existing data
     await Location.deleteMany({});
     await Review.deleteMany({});
-    const testCoordinate: [number, number] = [40.7656066, -73.9553663]; // Explicitly type as a tuple
+    const testCoordinate: [number, number] = [ -73.9553663, 40.7656066]; // Explicitly type as a tuple
 
     // Generate locations
     // Convert the generated strings to numbers if needed
@@ -34,7 +34,7 @@ const seedDatabase = async () => {
         for (let j = 0; j < 5; j++) {
             const newReview = await Review.create({
                 clueDescriptions: {
-                    [faker.lorem.word()]: faker.lorem.text(),
+                    [faker.lorem.word()]: faker.lorem.word(),
                 },
                 review: faker.lorem.paragraph(),
                 likes: faker.number.int({ min: 10, max: 100 }),
