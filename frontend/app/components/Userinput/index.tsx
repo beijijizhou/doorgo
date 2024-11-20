@@ -99,6 +99,7 @@ export default function Userinput() {
           type="text"
           placeholder="Search destination"
           value={inputValue}
+          name = {"searchBox"}
           onChange={onInputChange}
           style={{
             width: "100%",

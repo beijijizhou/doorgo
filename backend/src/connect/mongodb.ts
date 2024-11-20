@@ -1,11 +1,11 @@
 import mongoose, { ConnectOptions } from 'mongoose';
 
-const uri = 'mongodb://localhost:27017/doorfront'; // Your MongoDB connection string
+export const DB_URL = 'mongodb://localhost:27017/doorfront'; // Your MongoDB connection string
 
 // Set up a function to connect to MongoDB and export the connection
 const connectDB = async () => {
   try {
-    await mongoose.connect(uri, {
+    await mongoose.connect(DB_URL, {
       // No need to specify useNewUrlParser or useUnifiedTopology in recent versions
     } as ConnectOptions); // Cast to ConnectOptions if required by TypeScript
     console.log('Successfully connected to MongoDB');
