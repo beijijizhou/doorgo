@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 import Review from './review.model'; // Import Review model
 import Location from '../location/location.model'; // Import Location model
+import { distance, latlng, lnglat, reverse } from '../util/map';
 
 export const saveReview = async (req: Request, res: Response) => {
   const { geolocation, reviewData } = req.body;
   const { clueDescriptions, review } = reviewData;
-
   try {
     // Create a new review document
     const newReview = await Review.create({ clueDescriptions, review });
@@ -26,8 +26,8 @@ export const saveReview = async (req: Request, res: Response) => {
           type: 'Point',
           coordinates: [geolocation.lng, geolocation.lat],
         },
-        formatted_address:geolocation.formatted_address,
-        name:geolocation.name,
+        formatted_address: geolocation.formatted_address,
+        name: geolocation.name,
         reviewHistory: [newReview._id],
       });
     }
@@ -47,51 +47,59 @@ export const saveReview = async (req: Request, res: Response) => {
 export const fetchReviewHistory = async (req: Request, res: Response) => {
   try {
     const { geolocation } = req.body;
-    // Find the location by latitude and longitude
-    console.log(geolocation)
+    const { coordinates } = geolocation.geoCoordinates
     let locationDoc = await Location.findOne({
-      "geoCoordinates.coordinates": [geolocation.lng, geolocation.lat], // Update to match the coordinates schema
+      "geoCoordinates.coordinates": coordinates, // Update to match the coordinates schema
     }).populate('reviewHistory');
-    console.log("find exaction location", locationDoc);
-    
+    // console.log("find exaction location", locationDoc);
+
+    let isExact = true;
     if (!locationDoc) {
-      const nearbyLocations = await findLocationByProximity(geolocation.lat, geolocation.lng);
-      console.log("find close location", nearbyLocations);
+      const nearbyLocations = await findLocationByProximity(coordinates);
       if (!nearbyLocations.length) {
         res.status(404).json({ message: 'Location not found' });
         return;
-      } 
+      }
+      
 
-      res.status(200).json({ reviewHistory: nearbyLocations[0].reviewHistory });
+      isExact = false,
+        res.status(200).json({ locationData: nearbyLocations[0], isExact });
       return
     }
     // Return the reviews associated with the location
-    res.status(200).json({ reviewHistory: locationDoc.reviewHistory });
+    res.status(200).json({ locationData: locationDoc, isExact });
   } catch (error) {
     console.error('Error fetching reviews:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
 
-
-
-export const findLocationByProximity = async (lat: number, lng: number) => {
+export const findLocationByProximity = async (coordinates: lnglat) => {
   try {
     const query = {
       geoCoordinates: {
         $near: {
           $geometry: {
             type: 'Point',
-            coordinates: [lng, lat],
+            coordinates: coordinates,
           },
           $maxDistance: 100000, // Adjust this distance (in meters) as needed
         },
       },
     };
-    
+
     // Find and return up to 5 nearby locations
-    const results = await Location.find(query).limit(5).populate("reviewHistory");
-    return results;
+    const results = await Location.find(query).limit(1).populate("reviewHistory");
+
+    const resultsWithDistance = results.map(location => {
+      // console.log(results)
+      // console.log(reverse(coordinates), reverse(location!.geoCoordinates!.coordinates as lnglat))
+      const geoDistance = distance(reverse(coordinates), reverse(location!.geoCoordinates!.coordinates as lnglat));
+      // console.log(geoDistance)
+      return { ...location.toObject(), geoDistance };
+    });
+
+    return resultsWithDistance;
   } catch (error) {
     console.error('Error in proximity search:', error);
     return [];
@@ -134,3 +142,4 @@ module.exports = {
   fetchReviewHistory,
   updateReview,
 }
+

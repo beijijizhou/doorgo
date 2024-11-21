@@ -75,13 +75,15 @@ export default function Userinput() {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
         const result = results![0];
         const newDestination: Geolocation = {
-          lat: result.geometry!.location!.lat(),
-          lng: result.geometry!.location!.lng(),
+          geoCoordinates: {
+            type: "Point",
+            coordinates: [result.geometry!.location!.lng(), result.geometry!.location!.lat()], // [longitude, latitude]
+          },
           formatted_address: result.formatted_address! || "",
           name: result.name || "",
           place_id: result.place_id || "",
-
         };
+
 
         setDestination(newDestination);
 
@@ -94,7 +96,7 @@ export default function Userinput() {
 
   return (
     <div  >
-      <AdvancedMarker position={{ lat: destinationData!.geolocation.lat, lng: destinationData!.geolocation.lng }}></AdvancedMarker>
+      <AdvancedMarker position={{ lat: destinationData!.geolocation.geoCoordinates.coordinates[1], lng: destinationData!.geolocation.geoCoordinates.coordinates[0] }}></AdvancedMarker>
       <div style={{ marginBottom: "10px" }}>
         <input
           type="text"

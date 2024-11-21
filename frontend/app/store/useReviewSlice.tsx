@@ -1,16 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { StateCreator } from 'zustand';
-import { LocationData, Geolocation, ReviewData } from './interfaces';
+import { LocationData, Geolocation, ReviewData, LocationDataAPI } from './interfaces';
 import { fetchReviewHistory, updateReview } from '../api/review/reviewAPI';
 import { MapSlice } from './useMapSlice';
 
-const geolocation = {
-    lat: 40.7656066,
-    lng: -73.9553663,
+const geolocation:Geolocation = {
+    geoCoordinates: {
+        type: "Point",
+        coordinates: [-73.9553663, 40.7656066], // [longitude, latitude]
+    },
     formatted_address: "1305 York Ave, New York, NY 10021, USA",
     name: "1305 York Ave",
     place_id: "ChIJdbJa3MNYwokRbt4-Xg85VBY",
-}
+};
+
 const defaultDestinationData: LocationData = {
     geolocation,
     reviewHistory: [],
@@ -26,13 +29,17 @@ export const createReviewSlice: StateCreator<ReviewSlice & MapSlice, [], [], Rev
     setDestination: async (newDestination: Geolocation) => {
         const map = get().map; // Access map from combined store
         if (map) {
-            map.setCenter({ lat: newDestination.lat, lng: newDestination.lng });
+            map.setCenter({ lat: newDestination.geoCoordinates.coordinates[1], lng: newDestination.geoCoordinates.coordinates[0] });
         }
-        const data = await fetchReviewHistory(newDestination)
+        const data: LocationDataAPI = await fetchReviewHistory(newDestination)
+        // if (!data.isExact) {
+        //     alert("Clostest location")
+        // }
+        console.log(data)
         set({
             destinationData: {
                 geolocation: newDestination,
-                reviewHistory: data.reviewHistory,
+                reviewHistory: data.locationData.reviewHistory,
             },
         });
     },
