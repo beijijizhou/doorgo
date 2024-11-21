@@ -67,9 +67,7 @@ export default function Userinput() {
   };
   const handleSearch = (destination?: string) => {
 
-    // const searchValue = destination || inputValue;
-    const searchValue = "bmcc"
-    // setReviewHistory();
+    const searchValue = destination || inputValue;
     if (!searchValue) return
     const request = { query: searchValue };
 

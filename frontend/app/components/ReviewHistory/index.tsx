@@ -4,6 +4,7 @@ import useStore from "@/app/store";
 import { HandThumbUpIcon } from "@heroicons/react/16/solid";
 import { ReviewData } from "@/app/store/interfaces";
 import ReviewForm from "../ReviewForm";
+import { sortOptions } from "./interfaces";
 const ReviewHistory = () => {
   const reviewHistory = useStore((state) => state.destinationData!.reviewHistory); // Track reviewList with Zustand hook
   const { updateReview } = useStore.getState()
@@ -14,7 +15,11 @@ const ReviewHistory = () => {
     reviewData.likes! ++;
     updateReview(reviewData);
   }
-
+  const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedSort = event.target.value;
+    console.log("Selected Sort:", selectedSort);
+    // Add your sorting logic here
+  };
   return (
     <div className="space-y-6">
       {reviewHistory.length > 0 ? (
@@ -26,13 +31,15 @@ const ReviewHistory = () => {
             <div className="relative">
               <select
                 className="bg-white border border-gray-300 text-gray-700 rounded-md p-2"
-              // onChange={handleSortChange} // You can define the function to handle sorting
+                onChange={handleSortChange}
               >
-                <option value="likes">Sort by Likes</option>
-                <option value="time">Sort by Time Relevance</option>
+                {sortOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
               </select>
             </div>
-
           </div>
 
 
