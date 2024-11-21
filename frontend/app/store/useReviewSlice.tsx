@@ -2,6 +2,7 @@
 import { StateCreator } from 'zustand';
 import { LocationData, Geolocation, ReviewData } from './interfaces';
 import { fetchReviewHistory, updateReview } from '../api/review/reviewAPI';
+import { MapSlice } from './useMapSlice';
 
 const geolocation = {
     lat: 40.7656066,
@@ -21,15 +22,18 @@ export interface ReviewSlice {
     updateReview: (review: ReviewData) => void;
 }
 
-export const createReviewSlice: StateCreator<ReviewSlice, [], []> = (set, get) => ({
+export const createReviewSlice: StateCreator<ReviewSlice & MapSlice, [], [], ReviewSlice> = (set, get) => ({
     destinationData: defaultDestinationData,
-    map: null,
     setDestination: async (newDestination: Geolocation) => {
-        // set({ destinationData: newDestination })
-        // console.log(newDestination)
-        // fetchReviewHistory(newDestination);
-        // const data = await fetchReviewHistory(destinationData!.geolocation)
+        const map = get().map; // Access map from combined store
+        console.log(map)
+        if (map) {
+            map.setCenter({ lat: newDestination.lat, lng: newDestination.lng });
+        }
+  
         const data = await fetchReviewHistory(newDestination)
+
+
         set({
             destinationData: {
                 geolocation: newDestination,

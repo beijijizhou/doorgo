@@ -5,8 +5,8 @@ import { useMap, useMapsLibrary, AdvancedMarker } from "@vis.gl/react-google-map
 import useStore from "../../store";
 import { Geolocation } from "@/app/store/interfaces";
 export default function Userinput() {
-  const { setReviewHistory, setDestination } = useStore.getState();
-  const { destinationData } = useStore.getState();
+  const { setDestination, setMap } = useStore.getState();
+  const destinationData = useStore((state) => state.destinationData);
   const [inputValue, setInputValue] = useState("");
   const placesLibrary = useMapsLibrary("places");
   const map = useMap();
@@ -20,7 +20,10 @@ export default function Userinput() {
       setAutoComplete(new placesLibrary.AutocompleteService());
       setPalcesService(new google.maps.places.PlacesService(map!))
     }
-  }, [placesLibrary, map, destinationData]);
+    if (map) {
+      setMap(map);
+    }
+  }, [placesLibrary, map, destinationData, setMap]);
 
   const updatePredictions = (inputValue: string) => {
     if (!autoComplete || inputValue.length === 0) {
@@ -93,13 +96,13 @@ export default function Userinput() {
 
   return (
     <div  >
-      <AdvancedMarker position={{lat: destinationData!.geolocation.lat, lng: destinationData!.geolocation.lng}}></AdvancedMarker>
+      <AdvancedMarker position={{ lat: destinationData!.geolocation.lat, lng: destinationData!.geolocation.lng }}></AdvancedMarker>
       <div style={{ marginBottom: "10px" }}>
         <input
           type="text"
           placeholder="Search destination"
           value={inputValue}
-          name = {"searchBox"}
+          name={"searchBox"}
           onChange={onInputChange}
           style={{
             width: "100%",
