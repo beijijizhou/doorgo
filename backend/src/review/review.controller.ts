@@ -60,10 +60,10 @@ export const fetchReviewHistory = async (req: Request, res: Response) => {
         res.status(404).json({ message: 'Location not found' });
         return;
       }
-      
 
       isExact = false,
-        res.status(200).json({ locationData: nearbyLocations[0], isExact });
+      console.log(nearbyLocations[0].reviewHistory)
+      res.status(200).json({ locationData: nearbyLocations[0], isExact });
       return
     }
     // Return the reviews associated with the location
@@ -98,7 +98,7 @@ export const findLocationByProximity = async (coordinates: lnglat) => {
       // console.log(geoDistance)
       return { ...location.toObject(), geoDistance };
     });
-
+    // console.log(resultsWithDistance[0].reviewHistory)
     return resultsWithDistance;
   } catch (error) {
     console.error('Error in proximity search:', error);

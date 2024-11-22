@@ -5,11 +5,18 @@ import { HandThumbUpIcon } from "@heroicons/react/16/solid";
 import { ReviewData } from "@/app/store/interfaces";
 import ReviewForm from "../ReviewForm";
 import { sortOptions } from "./interfaces";
+import { useEffect, useState } from "react";
 const ReviewHistory = () => {
-  const reviewHistory = useStore((state) => state.destinationData!.reviewHistory); // Track reviewList with Zustand hook
-  const { updateReview } = useStore.getState()
+  const reviewHistory = useStore((state) => state.destinationData!.reviewHistory);
+  const [sortedReviewsHistory, setsortedReviewsHistory] = useState(reviewHistory); // Local state for sorted reviews
 
+  const { updateReview,  } = useStore.getState()
 
+  useEffect(() => {
+    if (reviewHistory) {
+      setsortedReviewsHistory(reviewHistory); // Initialize with the latest reviewHistory
+    }
+  }, [reviewHistory]);
 
   const handleLike = (reviewData: ReviewData) => {
     reviewData.likes! ++;
@@ -17,15 +24,32 @@ const ReviewHistory = () => {
   }
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedSort = event.target.value;
-    console.log("Selected Sort:", selectedSort);
-    // Add your sorting logic here
+
+    if (!reviewHistory) return;
+
+    let newSortedReviews = [...reviewHistory!]; // Create a copy of the original reviewHistory
+
+    // Sort the copied array based on the selected option
+    if (selectedSort === "likes") {
+      newSortedReviews.sort((a, b) => b.likes - a!.likes); // Sort by likes (descending)
+    } else if (selectedSort === "time") {
+      newSortedReviews.sort((a, b) => 
+        (Date.parse(b.createdAt || "") || 0) - (Date.parse(a.createdAt || "") || 0)
+      );
+    } else {
+      // Default sorting (use the original order)
+      newSortedReviews = [...reviewHistory];
+    }
+
+    // Update the sorted reviews locally without changing the original data in the store
+    setsortedReviewsHistory(newSortedReviews);
   };
   return (
     <div className="space-y-6">
-      {reviewHistory.length > 0 ? (
+      {sortedReviewsHistory.length > 0 ? (
 
         <div>
-          <h2 className="text-2xl font-semibold">{reviewHistory.length} Reviews</h2>
+          <h2 className="text-2xl font-semibold">{sortedReviewsHistory.length} Reviews</h2>
 
           <div className="flex items-center space-x-4">
             <div className="relative">
@@ -43,8 +67,9 @@ const ReviewHistory = () => {
           </div>
 
 
-          {reviewHistory.map((reviewData, index) => (
+          {sortedReviewsHistory.map((reviewData, index) => (
             <div key={index} className="review-item bg-white p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow m-4">
+              <h3 className="text-lg font-medium text-blue-600" >{reviewData.createdAt}</h3>
               <h3 className="text-lg font-medium text-blue-600" >Review:</h3>
               <p className="text-gray-600">{reviewData.review}</p>
 
