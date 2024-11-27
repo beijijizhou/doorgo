@@ -29,15 +29,13 @@ const ReviewHistory = () => {
     const selectedSort = event.target.value as "default" | "likes" | "time";
     sortReviewHistory(selectedSort); // Sort reviews in the store
   };
-  console.log(locationData?.isNearby)
-  const coordinates = locationData?.geolocation.geoCoordinates.coordinates
-  const position = coordinates ? { lat: coordinates[1], lng: coordinates[0] } : null;
+  // console.log(locationData?.isNearby)
+ 
   return (
     <div className="space-y-6">
       {locationData && sortedReviewsHistory.length > 0 ? (
         <div>
-          <h1>{locationData.isNearby}</h1>
-          {locationData.isNearby && position && <AdvancedMarker position={position} draggable={true}></AdvancedMarker>}
+          {locationData.isNearby && <NearbyLocation></NearbyLocation>}
           <h2 className="text-2xl font-semibold"> {locationData?.geolocation.formatted_address}</h2>
 
           <h2 className="text-2xl font-semibold">{sortedReviewsHistory.length} Reviews</h2>

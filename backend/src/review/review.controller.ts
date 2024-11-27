@@ -62,7 +62,7 @@ export const fetchReviewHistory = async (req: Request, res: Response) => {
       }
 
       isNearby = !isNearby,
-      console.log(nearbyLocations[0].reviewHistory)
+      // console.log(nearbyLocations[0].reviewHistory)
       
       res.status(200).json({ locationData: nearbyLocations[0], isNearby });
       return
