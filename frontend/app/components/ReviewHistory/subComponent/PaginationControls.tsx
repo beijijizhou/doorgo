@@ -1,6 +1,6 @@
 import React from 'react';
 import useStore from "@/app/store";
-import { RightArrowIcon,LeftArrowIcon } from './ArrowIcon';
+import { ArrowIcon } from './ArrowIcon';
 export default function PaginationControls() {
     const sortedReviewsHistory = useStore((state) => state.sortedReviewsHistory);
     const currentIndex = useStore((state) => state.currentIndex);
@@ -54,9 +54,10 @@ export default function PaginationControls() {
                 onClick={() => setCurrentIndex(currentIndex - 1)} // Adjusts the currentIndex in the store
                 disabled={currentIndex === 1}
             >
-                <LeftArrowIcon></LeftArrowIcon>
+                <ArrowIcon direction="left"  />
+
             </button>
-            
+
 
             <div className="pagination-controls flex gap-2">
                 {pageNumbers.map((page, index) => {
@@ -85,7 +86,7 @@ ${isEllipsis ? 'cursor-default text-gray-500 bg-transparent border-none hover:bg
                 onClick={() => setCurrentIndex(currentIndex + 1)} // Adjusts the currentIndex in the store
                 disabled={currentIndex === totalPages}
             >
-                <RightArrowIcon></RightArrowIcon>
+                <ArrowIcon direction="right"  />
             </button>
         </div>
     );
