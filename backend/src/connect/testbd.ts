@@ -36,7 +36,7 @@ const seedDatabase = async () => {
         distance_array[i] = distance(nearbyCoordinate, testCoordinate)
 
         // // Generate reviews for each location
-        for (let j = 0; j < 5; j++) {
+        for (let j = 0; j < 50; j++) {
             const newReview = await Review.create({
                 clueDescriptions: {
                     [faker.lorem.word()]: faker.lorem.word(),

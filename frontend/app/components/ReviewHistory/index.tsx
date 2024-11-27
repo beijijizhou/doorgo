@@ -5,50 +5,34 @@ import { HandThumbUpIcon } from "@heroicons/react/16/solid";
 import { ReviewData } from "@/app/store/interfaces";
 import ReviewForm from "../ReviewForm";
 import { sortOptions } from "./interfaces";
-import { useEffect, useState } from "react";
+import PaginationControls from "./PaginationControls";
 const ReviewHistory = () => {
-  const reviewHistory = useStore((state) => state.destinationData!.reviewHistory);
-  const [sortedReviewsHistory, setsortedReviewsHistory] = useState(reviewHistory); // Local state for sorted reviews
+  const sortedReviewsHistory = useStore((state) => state.sortedReviewsHistory);
+  const currentIndex = useStore((state) => state.currentIndex);
+  const { reviewsPerPage } = useStore.getState();
+  const startIndex = (currentIndex - 1) * reviewsPerPage;
+  const endIndex = startIndex + reviewsPerPage;
+  const currentReviewPage = sortedReviewsHistory.slice(startIndex, endIndex);
 
-  const { updateReview,  } = useStore.getState()
+  const { destinationData, updateReview, sortReviewHistory } = useStore.getState()
 
-  useEffect(() => {
-    if (reviewHistory) {
-      setsortedReviewsHistory(reviewHistory); // Initialize with the latest reviewHistory
-    }
-  }, [reviewHistory]);
+
 
   const handleLike = (reviewData: ReviewData) => {
     reviewData.likes! ++;
     updateReview(reviewData);
   }
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedSort = event.target.value;
-
-    if (!reviewHistory) return;
-
-    let newSortedReviews = [...reviewHistory!]; // Create a copy of the original reviewHistory
-
-    // Sort the copied array based on the selected option
-    if (selectedSort === "likes") {
-      newSortedReviews.sort((a, b) => b.likes - a!.likes); // Sort by likes (descending)
-    } else if (selectedSort === "time") {
-      newSortedReviews.sort((a, b) => 
-        (Date.parse(b.createdAt || "") || 0) - (Date.parse(a.createdAt || "") || 0)
-      );
-    } else {
-      // Default sorting (use the original order)
-      newSortedReviews = [...reviewHistory];
-    }
-
-    // Update the sorted reviews locally without changing the original data in the store
-    setsortedReviewsHistory(newSortedReviews);
+    const selectedSort = event.target.value as "default" | "likes" | "time";
+    sortReviewHistory(selectedSort); // Sort reviews in the store
   };
   return (
     <div className="space-y-6">
       {sortedReviewsHistory.length > 0 ? (
-
         <div>
+
+          <h2 className="text-2xl font-semibold"> {destinationData?.geolocation.formatted_address}</h2>
+
           <h2 className="text-2xl font-semibold">{sortedReviewsHistory.length} Reviews</h2>
 
           <div className="flex items-center space-x-4">
@@ -65,9 +49,10 @@ const ReviewHistory = () => {
               </select>
             </div>
           </div>
+          <PaginationControls></PaginationControls>
 
 
-          {sortedReviewsHistory.map((reviewData, index) => (
+          {currentReviewPage.map((reviewData, index) => (
             <div key={index} className="review-item bg-white p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow m-4">
               <h3 className="text-lg font-medium text-blue-600" >{reviewData.createdAt}</h3>
               <h3 className="text-lg font-medium text-blue-600" >Review:</h3>
@@ -91,7 +76,6 @@ const ReviewHistory = () => {
               </button>
             </div>
           ))}
-          <ReviewForm></ReviewForm>
         </div>
 
       ) : (

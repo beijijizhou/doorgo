@@ -25,3 +25,13 @@ export interface LocationDataAPI {
     locationData: LocationData,
     isExact: boolean,
 }
+
+export const geolocation:Geolocation = {
+    geoCoordinates: {
+        type: "Point",
+        coordinates: [-73.9553663, 40.7656066], // [longitude, latitude]
+    },
+    formatted_address: "1305 York Ave, New York, NY 10021, USA",
+    name: "1305 York Ave",
+    place_id: "ChIJdbJa3MNYwokRbt4-Xg85VBY",
+};

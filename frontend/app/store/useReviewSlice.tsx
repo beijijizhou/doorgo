@@ -1,46 +1,48 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { StateCreator } from 'zustand';
-import { LocationData, Geolocation, ReviewData, LocationDataAPI } from './interfaces';
+import { LocationData, Geolocation, ReviewData, LocationDataAPI, geolocation } from './interfaces';
 import { fetchReviewHistory, updateReview } from '../api/review/reviewAPI';
 import { MapSlice } from './useMapSlice';
 
-const geolocation:Geolocation = {
-    geoCoordinates: {
-        type: "Point",
-        coordinates: [-73.9553663, 40.7656066], // [longitude, latitude]
-    },
-    formatted_address: "1305 York Ave, New York, NY 10021, USA",
-    name: "1305 York Ave",
-    place_id: "ChIJdbJa3MNYwokRbt4-Xg85VBY",
-};
+
 
 const defaultDestinationData: LocationData = {
     geolocation,
     reviewHistory: [],
 }
 export interface ReviewSlice {
-    destinationData: LocationData | null,
+    destinationData: LocationData | null;
+    sortedReviewsHistory: ReviewData[]; // Add sorted reviews to the store
+    currentIndex: number; // Index for pagination
+    reviewsPerPage: number;
+    setCurrentIndex: (index: number) => void;
     setDestination: (newDestination: Geolocation) => void;
     updateReview: (review: ReviewData) => void;
+    sortReviewHistory: (criteria: "default" | "likes" | "time") => void;
 }
 
 export const createReviewSlice: StateCreator<ReviewSlice & MapSlice, [], [], ReviewSlice> = (set, get) => ({
     destinationData: defaultDestinationData,
+    sortedReviewsHistory: [], // Initialize sorted reviews
+    currentIndex: 1, // Start at the first page
+    reviewsPerPage: 5,
+    setCurrentIndex: (index) => set({ currentIndex: index }),
     setDestination: async (newDestination: Geolocation) => {
         const map = get().map; // Access map from combined store
         if (map) {
-            map.setCenter({ lat: newDestination.geoCoordinates.coordinates[1], lng: newDestination.geoCoordinates.coordinates[0] });
+            map.setCenter({
+                lat: newDestination.geoCoordinates.coordinates[1],
+                lng: newDestination.geoCoordinates.coordinates[0],
+            });
         }
-        const data: LocationDataAPI = await fetchReviewHistory(newDestination)
-        // if (!data.isExact) {
-        //     alert("Clostest location")
-        // }
-        console.log(data)
+
+        const data: LocationDataAPI = await fetchReviewHistory(newDestination);
         set({
             destinationData: {
                 geolocation: newDestination,
                 reviewHistory: data.locationData.reviewHistory,
             },
+            sortedReviewsHistory: data.locationData.reviewHistory, // Set sorted reviews to default
         });
     },
 
@@ -54,7 +56,31 @@ export const createReviewSlice: StateCreator<ReviewSlice & MapSlice, [], [], Rev
                         review._id === updatedReview._id ? updatedReview : review
                     ),
                 },
+                sortedReviewsHistory: state.sortedReviewsHistory.map((review) =>
+                    review._id === updatedReview._id ? updatedReview : review
+                ),
             }));
         }
+    },
+
+    sortReviewHistory: (criteria) => {
+        const state = get();
+        if (!state.destinationData?.reviewHistory) return;
+
+        let sortedReviews = [...state.destinationData.reviewHistory]; // Copy the review history
+
+        if (criteria === "likes") {
+            sortedReviews.sort((a, b) => b.likes - a.likes); // Sort by likes (descending)
+        } else if (criteria === "time") {
+            sortedReviews.sort(
+                (a, b) =>
+                    (Date.parse(b.createdAt || "") || 0) - (Date.parse(a.createdAt || "") || 0)
+            );
+        } else {
+            // Reset to default order
+            sortedReviews = [...state.destinationData.reviewHistory];
+        }
+
+        set({ sortedReviewsHistory: sortedReviews, currentIndex: 1 });
     },
 });

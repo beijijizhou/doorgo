@@ -19,12 +19,12 @@ export default function MapService() {
         <Userinput></Userinput>
         <div style={{ display: 'flex', width: '100vw', height: '90vh' }}>
           <Map
-            style={{ flex: 7, width: '100%', height: '100%' }}  // Use flex number, width and height to fill available space
+            style={{ flex: 6, width: '100%', height: '100%' }}  // Use flex number, width and height to fill available space
             defaultCenter={defaultLocation}
             defaultZoom={zoomLevel}
             mapId={MAP_ID}
           />
-          <div style={{ flex: 3, padding: '10px', overflowY: 'auto', backgroundColor: '#f5f5f5' }}>
+          <div style={{ flex: 4, padding: '10px', overflowY: 'auto', backgroundColor: '#f5f5f5' }}>
             <ReviewHistory />
           </div>
         </div>
