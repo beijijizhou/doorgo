@@ -12,7 +12,6 @@ const defaultDestinationData: LocationData = {
 }
 export interface ReviewSlice {
     destinationData: LocationData | null;
-    sortedReviewsHistory: ReviewData[]; // Add sorted reviews to the store
     currentIndex: number; // Index for pagination
     reviewsPerPage: number;
     setCurrentIndex: (index: number) => void;
@@ -23,7 +22,6 @@ export interface ReviewSlice {
 
 export const createReviewSlice: StateCreator<ReviewSlice & MapSlice, [], [], ReviewSlice> = (set, get) => ({
     destinationData: defaultDestinationData,
-    sortedReviewsHistory: [], // Initialize sorted reviews
     currentIndex: 1, // Start at the first page
     reviewsPerPage: 5,
     setCurrentIndex: (index) => set({ currentIndex: index }),
@@ -42,7 +40,6 @@ export const createReviewSlice: StateCreator<ReviewSlice & MapSlice, [], [], Rev
                 geolocation: newDestination,
                 reviewHistory: data.locationData.reviewHistory,
             },
-            sortedReviewsHistory: data.locationData.reviewHistory, // Set sorted reviews to default
         });
     },
 
@@ -56,18 +53,16 @@ export const createReviewSlice: StateCreator<ReviewSlice & MapSlice, [], [], Rev
                         review._id === updatedReview._id ? updatedReview : review
                     ),
                 },
-                sortedReviewsHistory: state.sortedReviewsHistory.map((review) =>
-                    review._id === updatedReview._id ? updatedReview : review
-                ),
+
             }));
         }
     },
 
     sortReviewHistory: (criteria) => {
-        const state = get();
-        if (!state.destinationData?.reviewHistory) return;
+        const { destinationData } = get();
+        if (!destinationData) return;
 
-        let sortedReviews = [...state.destinationData.reviewHistory]; // Copy the review history
+        const sortedReviews = [...destinationData.reviewHistory];
 
         if (criteria === "likes") {
             sortedReviews.sort((a, b) => b.likes - a.likes); // Sort by likes (descending)
@@ -78,9 +73,22 @@ export const createReviewSlice: StateCreator<ReviewSlice & MapSlice, [], [], Rev
             );
         } else {
             // Reset to default order
-            sortedReviews = [...state.destinationData.reviewHistory];
+            sortedReviews.sort((a, b) => {
+                if (a._id && b._id) {
+                    return a._id.localeCompare(b._id); // Compare _id if both are defined
+                }
+                // If either _id is missing, handle it (optional)
+                return 0; // No sorting if _id is missing
+            });
+            
         }
 
-        set({ sortedReviewsHistory: sortedReviews, currentIndex: 1 });
+        set({
+            destinationData: {
+                ...destinationData,
+                reviewHistory: sortedReviews,
+            },
+            currentIndex: 1, // Reset to first page on sorting
+        });
     },
 });

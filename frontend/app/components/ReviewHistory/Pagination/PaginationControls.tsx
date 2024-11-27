@@ -2,7 +2,7 @@ import React from 'react';
 import useStore from "@/app/store";
 import { ArrowIcon } from './ArrowIcon';
 export default function PaginationControls() {
-    const sortedReviewsHistory = useStore((state) => state.sortedReviewsHistory);
+    const sortedReviewsHistory = useStore((state) => state.destinationData!.reviewHistory);
     const currentIndex = useStore((state) => state.currentIndex);
     const setCurrentIndex = useStore((state) => state.setCurrentIndex);
     // const currentReviewPage = sortedReviewsHistory.slice(currentIndex - 1, currentIndex);

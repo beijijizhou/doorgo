@@ -5,9 +5,9 @@ import { HandThumbUpIcon } from "@heroicons/react/16/solid";
 import { ReviewData } from "@/app/store/interfaces";
 import ReviewForm from "../ReviewForm";
 import { sortOptions } from "./interfaces";
-import PaginationControls from "./subComponent/PaginationControls";
+import PaginationControls from "./Pagination/PaginationControls";
 const ReviewHistory = () => {
-  const sortedReviewsHistory = useStore((state) => state.sortedReviewsHistory);
+  const sortedReviewsHistory = useStore((state) => state.destinationData!.reviewHistory);
   const currentIndex = useStore((state) => state.currentIndex);
   const { reviewsPerPage } = useStore.getState();
   const startIndex = (currentIndex - 1) * reviewsPerPage;
