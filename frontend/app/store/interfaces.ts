@@ -11,7 +11,7 @@ export interface Geolocation {
 export interface LocationData {
     geolocation: Geolocation,
     reviewHistory: ReviewData[]
-    reviewData?: ReviewData,
+    isNearby?:boolean,
 }
 export interface ReviewData {
     clueDescriptions: { [key: string]: string }; // Object with clues as keys and descriptions as values
@@ -23,7 +23,7 @@ export interface ReviewData {
 
 export interface LocationDataAPI {
     locationData: LocationData,
-    isExact: boolean,
+    isNearby: boolean,
 }
 
 export const geolocation:Geolocation = {

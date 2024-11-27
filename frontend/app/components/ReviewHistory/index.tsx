@@ -6,15 +6,18 @@ import { ReviewData } from "@/app/store/interfaces";
 import ReviewForm from "../ReviewForm";
 import { sortOptions } from "./interfaces";
 import PaginationControls from "./Pagination/PaginationControls";
+import NearbyLocation from "./NearbyLocation";
+import { AdvancedMarker } from "@vis.gl/react-google-maps";
 const ReviewHistory = () => {
-  const sortedReviewsHistory = useStore((state) => state.destinationData!.reviewHistory);
+  const sortedReviewsHistory = useStore((state) => state.locationData!.reviewHistory);
   const currentIndex = useStore((state) => state.currentIndex);
+  const locationData = useStore((state) => state.locationData)
   const { reviewsPerPage } = useStore.getState();
   const startIndex = (currentIndex - 1) * reviewsPerPage;
   const endIndex = startIndex + reviewsPerPage;
   const currentReviewPage = sortedReviewsHistory.slice(startIndex, endIndex);
 
-  const { destinationData, updateReview, sortReviewHistory } = useStore.getState()
+  const { updateReview, sortReviewHistory } = useStore.getState()
 
 
 
@@ -26,12 +29,16 @@ const ReviewHistory = () => {
     const selectedSort = event.target.value as "default" | "likes" | "time";
     sortReviewHistory(selectedSort); // Sort reviews in the store
   };
+  console.log(locationData?.isNearby)
+  const coordinates = locationData?.geolocation.geoCoordinates.coordinates
+  const position = coordinates ? { lat: coordinates[1], lng: coordinates[0] } : null;
   return (
     <div className="space-y-6">
-      {sortedReviewsHistory.length > 0 ? (
+      {locationData && sortedReviewsHistory.length > 0 ? (
         <div>
-
-          <h2 className="text-2xl font-semibold"> {destinationData?.geolocation.formatted_address}</h2>
+          <h1>{locationData.isNearby}</h1>
+          {locationData.isNearby && position && <AdvancedMarker position={position} draggable={true}></AdvancedMarker>}
+          <h2 className="text-2xl font-semibold"> {locationData?.geolocation.formatted_address}</h2>
 
           <h2 className="text-2xl font-semibold">{sortedReviewsHistory.length} Reviews</h2>
 

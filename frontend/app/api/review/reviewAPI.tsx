@@ -8,13 +8,29 @@ export const sendReview = async (data: LocationData) => {
     return response.data;
 };
 
-export const fetchReviewHistory = async (geolocation: Geolocation) => {
+export const fetchReviewHistory = async (newGeolocation: Geolocation) => {
     console.time("fetchReviewHistory"); // Start the timer
-    console.log(geolocation)
     try {
-        const response = await axios.post(apiRoutes.FETCH_REVIEW_HISTORY, { geolocation });
+        const response = await axios.post(apiRoutes.FETCH_REVIEW_HISTORY, { geolocation: newGeolocation });
         console.timeEnd("fetchReviewHistory"); // End the timer and log the elapsed time
-        return response.data;
+        const {isNearby }= response.data;
+        const newLocationData = response.data.locationData
+        const { formatted_address, geoCoordinates, name, place_id,reviewHistory } = newLocationData;
+        
+        const geolocation: Geolocation = {
+            geoCoordinates,
+            formatted_address,
+            name,
+            place_id,
+        };
+        const locationData: LocationData = {
+            geolocation,
+            reviewHistory,
+            isNearby,
+        }
+        
+        return locationData
+        
     } catch (error) {
         console.timeEnd("fetchReviewHistory"); // Ensure the timer ends even if there's an error
         console.error("Error fetching review history:", error);

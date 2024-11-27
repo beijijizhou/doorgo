@@ -6,7 +6,7 @@ import { sendReview } from '@/app/api/review/reviewAPI';
 import useStore from '@/app/store';
 import { ReviewData } from '@/app/store/interfaces';
 export default function ClueSelector() {
-    const { destinationData } = useStore.getState();
+    const { locationData: destinationData } = useStore.getState();
     const [selectedClues, setSelectedClues] = useState<string[]>([]);
     const [additionalDescriptions, setAdditionalDescriptions] = useState<{ [key: string]: string }>({});
     const [review, setReview] = useState<string>("");
@@ -51,7 +51,7 @@ export default function ClueSelector() {
         const newReview: ReviewData = {
             clueDescriptions: additionalDescriptions,
             review,
-            likes:0,
+            likes: 0,
         };
         destinationData!.reviewData = newReview
         await sendReview(destinationData!);

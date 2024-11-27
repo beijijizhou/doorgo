@@ -53,7 +53,7 @@ export const fetchReviewHistory = async (req: Request, res: Response) => {
     }).populate('reviewHistory');
     // console.log("find exaction location", locationDoc);
 
-    let isExact = true;
+    let isNearby = false;
     if (!locationDoc) {
       const nearbyLocations = await findLocationByProximity(coordinates);
       if (!nearbyLocations.length) {
@@ -61,13 +61,14 @@ export const fetchReviewHistory = async (req: Request, res: Response) => {
         return;
       }
 
-      isExact = false,
+      isNearby = !isNearby,
       console.log(nearbyLocations[0].reviewHistory)
-      res.status(200).json({ locationData: nearbyLocations[0], isExact });
+      
+      res.status(200).json({ locationData: nearbyLocations[0], isNearby });
       return
     }
     // Return the reviews associated with the location
-    res.status(200).json({ locationData: locationDoc, isExact });
+    res.status(200).json({ locationData: locationDoc, isNearby });
   } catch (error) {
     console.error('Error fetching reviews:', error);
     res.status(500).json({ message: 'Internal server error' });

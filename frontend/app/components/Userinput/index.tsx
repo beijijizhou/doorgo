@@ -6,7 +6,8 @@ import useStore from "../../store";
 import { Geolocation } from "@/app/store/interfaces";
 export default function Userinput() {
   const { setDestination, setMap } = useStore.getState();
-  const destinationData = useStore((state) => state.destinationData);
+  const destinationData = useStore((state) => state.locationData);
+  const newGeolocation = useStore((state)=> state.geolocation);
   const [inputValue, setInputValue] = useState("");
   const placesLibrary = useMapsLibrary("places");
   const map = useMap();
@@ -93,10 +94,12 @@ export default function Userinput() {
     });
     setPredictions([]);
   }
-
+  const coordinates = newGeolocation?.geoCoordinates.coordinates;
+  const position = coordinates ? { lat: coordinates[1], lng: coordinates[0] } : null;
   return (
+
     <div  >
-      <AdvancedMarker position={{ lat: destinationData!.geolocation.geoCoordinates.coordinates[1], lng: destinationData!.geolocation.geoCoordinates.coordinates[0] }}></AdvancedMarker>
+     {position && <AdvancedMarker position= {position}></AdvancedMarker>}
       <div style={{ marginBottom: "10px" }}>
         <input
           type="text"

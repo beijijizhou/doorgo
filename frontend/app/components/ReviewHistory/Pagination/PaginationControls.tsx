@@ -2,7 +2,7 @@ import React from 'react';
 import useStore from "@/app/store";
 import { ArrowIcon } from './ArrowIcon';
 export default function PaginationControls() {
-    const sortedReviewsHistory = useStore((state) => state.destinationData!.reviewHistory);
+    const sortedReviewsHistory = useStore((state) => state.locationData!.reviewHistory);
     const currentIndex = useStore((state) => state.currentIndex);
     const setCurrentIndex = useStore((state) => state.setCurrentIndex);
     // const currentReviewPage = sortedReviewsHistory.slice(currentIndex - 1, currentIndex);
@@ -54,7 +54,7 @@ export default function PaginationControls() {
                 onClick={() => setCurrentIndex(currentIndex - 1)} // Adjusts the currentIndex in the store
                 disabled={currentIndex === 1}
             >
-                <ArrowIcon direction="left"  />
+                <ArrowIcon direction="left" />
 
             </button>
 
@@ -86,7 +86,7 @@ ${isEllipsis ? 'cursor-default text-gray-500 bg-transparent border-none hover:bg
                 onClick={() => setCurrentIndex(currentIndex + 1)} // Adjusts the currentIndex in the store
                 disabled={currentIndex === totalPages}
             >
-                <ArrowIcon direction="right"  />
+                <ArrowIcon direction="right" />
             </button>
         </div>
     );

@@ -9,11 +9,14 @@ import { MapSlice } from './useMapSlice';
 const defaultDestinationData: LocationData = {
     geolocation,
     reviewHistory: [],
+    
 }
 export interface ReviewSlice {
-    destinationData: LocationData | null;
+    geolocation: Geolocation | null;
+    locationData: LocationData | null;
     currentIndex: number; // Index for pagination
     reviewsPerPage: number;
+   
     setCurrentIndex: (index: number) => void;
     setDestination: (newDestination: Geolocation) => void;
     updateReview: (review: ReviewData) => void;
@@ -21,25 +24,29 @@ export interface ReviewSlice {
 }
 
 export const createReviewSlice: StateCreator<ReviewSlice & MapSlice, [], [], ReviewSlice> = (set, get) => ({
-    destinationData: defaultDestinationData,
+    geolocation: null,
+    locationData: defaultDestinationData,
     currentIndex: 1, // Start at the first page
     reviewsPerPage: 5,
+    
     setCurrentIndex: (index) => set({ currentIndex: index }),
-    setDestination: async (newDestination: Geolocation) => {
+    setDestination: async (newGeolocation: Geolocation) => {
         const map = get().map; // Access map from combined store
         if (map) {
             map.setCenter({
-                lat: newDestination.geoCoordinates.coordinates[1],
-                lng: newDestination.geoCoordinates.coordinates[0],
+                lat: newGeolocation.geoCoordinates.coordinates[1],
+                lng: newGeolocation.geoCoordinates.coordinates[0],
             });
         }
 
-        const data: LocationDataAPI = await fetchReviewHistory(newDestination);
+        const data: LocationData = await fetchReviewHistory(newGeolocation);
+        // console.log(data.locationData.geolocation, newGeolocation)
+        console.log(data)
+        
         set({
-            destinationData: {
-                geolocation: newDestination,
-                reviewHistory: data.locationData.reviewHistory,
-            },
+            
+            geolocation: newGeolocation,
+            locationData: data,
         });
     },
 
@@ -47,9 +54,9 @@ export const createReviewSlice: StateCreator<ReviewSlice & MapSlice, [], [], Rev
         const response = await updateReview(updatedReview);
         if (response.success) {
             set((state) => ({
-                destinationData: {
-                    ...state.destinationData!,
-                    reviewHistory: state.destinationData!.reviewHistory.map((review) =>
+                locationData: {
+                    ...state.locationData!,
+                    reviewHistory: state.locationData!.reviewHistory.map((review) =>
                         review._id === updatedReview._id ? updatedReview : review
                     ),
                 },
@@ -59,7 +66,7 @@ export const createReviewSlice: StateCreator<ReviewSlice & MapSlice, [], [], Rev
     },
 
     sortReviewHistory: (criteria) => {
-        const { destinationData } = get();
+        const { locationData: destinationData } = get();
         if (!destinationData) return;
 
         const sortedReviews = [...destinationData.reviewHistory];
@@ -80,11 +87,11 @@ export const createReviewSlice: StateCreator<ReviewSlice & MapSlice, [], [], Rev
                 // If either _id is missing, handle it (optional)
                 return 0; // No sorting if _id is missing
             });
-            
+
         }
 
         set({
-            destinationData: {
+            locationData: {
                 ...destinationData,
                 reviewHistory: sortedReviews,
             },
