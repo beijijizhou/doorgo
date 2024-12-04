@@ -13,14 +13,15 @@ const defaultDestinationData: LocationData = {
 }
 export interface ReviewSlice {
     geolocation: Geolocation | null;
-    locationData: LocationData | null;
+    locationData: LocationData | null ;
     currentIndex: number; // Index for pagination
     reviewsPerPage: number;
-   
+    showReviewHistory:boolean;
     setCurrentIndex: (index: number) => void;
     setDestination: (newDestination: Geolocation) => void;
     updateReview: (review: ReviewData) => void;
     sortReviewHistory: (criteria: "default" | "likes" | "time") => void;
+    setShowReviewHistory:() => void;
 }
 
 export const createReviewSlice: StateCreator<ReviewSlice & MapSlice, [], [], ReviewSlice> = (set, get) => ({
@@ -28,8 +29,11 @@ export const createReviewSlice: StateCreator<ReviewSlice & MapSlice, [], [], Rev
     locationData: defaultDestinationData,
     currentIndex: 1, // Start at the first page
     reviewsPerPage: 5,
-    
+    showReviewHistory:true,
     setCurrentIndex: (index) => set({ currentIndex: index }),
+    setShowReviewHistory: () => set((state) => (
+        
+        { showReviewHistory: !state.showReviewHistory })),
     setDestination: async (newGeolocation: Geolocation) => {
         const map = get().map; // Access map from combined store
         if (map) {
@@ -39,12 +43,12 @@ export const createReviewSlice: StateCreator<ReviewSlice & MapSlice, [], [], Rev
             });
         }
 
-        const data: LocationData = await fetchReviewHistory(newGeolocation);
+        const data: LocationData|null = await fetchReviewHistory(newGeolocation);
         // console.log(data.locationData.geolocation, newGeolocation)
-        console.log(data)
+        
         
         set({
-            
+            showReviewHistory:true,
             geolocation: newGeolocation,
             locationData: data,
         });

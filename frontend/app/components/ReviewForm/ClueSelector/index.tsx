@@ -6,7 +6,7 @@ import { sendReview } from '@/app/api/review/reviewAPI';
 import useStore from '@/app/store';
 import { ReviewData } from '@/app/store/interfaces';
 export default function ClueSelector() {
-    const { locationData: destinationData } = useStore.getState();
+    const { geolocation} = useStore.getState();
     const [selectedClues, setSelectedClues] = useState<string[]>([]);
     const [additionalDescriptions, setAdditionalDescriptions] = useState<{ [key: string]: string }>({});
     const [review, setReview] = useState<string>("");
@@ -53,8 +53,8 @@ export default function ClueSelector() {
             review,
             likes: 0,
         };
-        destinationData!.reviewData = newReview
-        await sendReview(destinationData!);
+        
+        await sendReview(geolocation!, newReview);
         // Send the data to the backend
     };
 

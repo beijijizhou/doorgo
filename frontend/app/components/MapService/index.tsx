@@ -4,7 +4,10 @@ import { APIProvider, Map, } from '@vis.gl/react-google-maps';
 import React from 'react'
 import Userinput from '../Userinput/index';
 import ReviewHistory from '../ReviewHistory';
+import ReviewForm from '../ReviewForm';
+import useStore from '@/app/store';
 export default function MapService() {
+  const showReviewHistory = useStore((state) => state.showReviewHistory);
   const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const MAP_ID = "ID";
   const zoomLevel = 13
@@ -25,7 +28,11 @@ export default function MapService() {
             mapId={MAP_ID}
           />
           <div style={{ flex: 6, padding: '10px', overflowY: 'auto', backgroundColor: '#f5f5f5' }}>
-            <ReviewHistory />
+            {/* <ReviewHistory /> */}
+            {
+              showReviewHistory?<ReviewHistory /> :<ReviewForm></ReviewForm>
+            }
+            
           </div>
         </div>
 

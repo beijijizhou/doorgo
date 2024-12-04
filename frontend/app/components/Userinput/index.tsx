@@ -5,9 +5,9 @@ import { useMap, useMapsLibrary, AdvancedMarker } from "@vis.gl/react-google-map
 import useStore from "../../store";
 import { Geolocation } from "@/app/store/interfaces";
 export default function Userinput() {
-  const { setDestination, setMap } = useStore.getState();
+  const { setDestination, setMap,setShowReviewHistory } = useStore.getState();
   const destinationData = useStore((state) => state.locationData);
-  const newGeolocation = useStore((state)=> state.geolocation);
+  const newGeolocation = useStore((state) => state.geolocation);
   const [inputValue, setInputValue] = useState("");
   const placesLibrary = useMapsLibrary("places");
   const map = useMap();
@@ -94,12 +94,15 @@ export default function Userinput() {
     });
     setPredictions([]);
   }
+  const handleAdd = () => {
+    setShowReviewHistory();
+  }
   const coordinates = newGeolocation?.geoCoordinates.coordinates;
   const position = coordinates ? { lat: coordinates[1], lng: coordinates[0] } : null;
   return (
 
     <div  >
-     {position && <AdvancedMarker position= {position}></AdvancedMarker>}
+      {position && <AdvancedMarker position={position}></AdvancedMarker>}
       <div style={{ marginBottom: "10px" }}>
         <input
           type="text"
@@ -139,35 +142,20 @@ export default function Userinput() {
         )}
       </div>
 
-      <div>
+      <div className="flex justify-center space-x-4">
         <button
           onClick={() => handleSearch()}
-          style={{
-            padding: "10px 15px",
-            fontSize: "1rem",
-            backgroundColor: "#5dade2", // Lighter blue background
-            color: "white", // White text
-            border: "none", // Remove border
-            cursor: "pointer", // Pointer cursor on hover
-            transition: "background-color 0.3s ease",
-
-
-          }}
-          className="mx-auto block"
-          onMouseEnter={(e) => {
-            const target = e.target as HTMLButtonElement; // Cast to HTMLButtonElement
-            target.style.backgroundColor = "#2980b9"; // Darker blue on hover
-          }}
-          onMouseLeave={(e) => {
-            const target = e.target as HTMLButtonElement; // Cast to HTMLButtonElement
-            target.style.backgroundColor = "#5dade2"; // Revert to original lighter blue
-          }}
+          className="px-4 py-2 text-white bg-blue-400 hover:bg-blue-500 border-none cursor-pointer transition-colors duration-300"
         >
           Get Reviews
         </button>
 
-
-
+        <button
+          onClick={() => handleAdd()}
+          className="px-4 py-2 text-white bg-blue-400 hover:bg-blue-500 border-none cursor-pointer transition-colors duration-300"
+        >
+          Add Review
+        </button>
       </div>
       <div>
 

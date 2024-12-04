@@ -5,6 +5,9 @@ import { distance, latlng, lnglat, reverse } from '../util/map';
 
 export const saveReview = async (req: Request, res: Response) => {
   const { geolocation, reviewData } = req.body;
+  const { coordinates } = geolocation.geoCoordinates
+
+  
   const { clueDescriptions, review } = reviewData;
   try {
     // Create a new review document
@@ -12,7 +15,7 @@ export const saveReview = async (req: Request, res: Response) => {
 
     // Try to find the location in the Location collection
     let locationDoc = await Location.findOne({
-      "geoCoordinates.coordinates": [geolocation.lng, geolocation.lat], // Update to match the coordinates schema
+      "geoCoordinates.coordinates": coordinates, // Update to match the coordinates schema
     });
 
     if (locationDoc) {
@@ -24,14 +27,14 @@ export const saveReview = async (req: Request, res: Response) => {
       locationDoc = await Location.create({
         geoCoordinates: { // Use geoCoordinates for location data
           type: 'Point',
-          coordinates: [geolocation.lng, geolocation.lat],
+          coordinates: coordinates,
         },
         formatted_address: geolocation.formatted_address,
         name: geolocation.name,
         reviewHistory: [newReview._id],
       });
     }
-
+    
     res.status(201).json({
       message: 'Review saved successfully',
       review: newReview,
@@ -43,7 +46,6 @@ export const saveReview = async (req: Request, res: Response) => {
   }
 };
 
-
 export const fetchReviewHistory = async (req: Request, res: Response) => {
   try {
     const { geolocation } = req.body;
@@ -51,13 +53,13 @@ export const fetchReviewHistory = async (req: Request, res: Response) => {
     let locationDoc = await Location.findOne({
       "geoCoordinates.coordinates": coordinates, // Update to match the coordinates schema
     }).populate('reviewHistory');
-    // console.log("find exaction location", locationDoc);
+    console.log("find exaction location", locationDoc);
 
     let isNearby = false;
     if (!locationDoc) {
       const nearbyLocations = await findLocationByProximity(coordinates);
       if (!nearbyLocations.length) {
-        res.status(404).json({ message: 'Location not found' });
+        res.status(204).json({ message: 'No nearby locations found' });
         return;
       }
 
@@ -84,7 +86,7 @@ export const findLocationByProximity = async (coordinates: lnglat) => {
             type: 'Point',
             coordinates: coordinates,
           },
-          $maxDistance: 100000, // Adjust this distance (in meters) as needed
+          $maxDistance: 10, // Adjust this distance (in meters) as needed
         },
       },
     };

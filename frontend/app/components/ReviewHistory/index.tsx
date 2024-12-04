@@ -3,19 +3,17 @@
 import useStore from "@/app/store";
 import { HandThumbUpIcon } from "@heroicons/react/16/solid";
 import { ReviewData } from "@/app/store/interfaces";
-import ReviewForm from "../ReviewForm";
 import { sortOptions } from "./interfaces";
 import PaginationControls from "./Pagination/PaginationControls";
 import NearbyLocation from "./NearbyLocation";
-import { AdvancedMarker } from "@vis.gl/react-google-maps";
 const ReviewHistory = () => {
-  const sortedReviewsHistory = useStore((state) => state.locationData!.reviewHistory);
+  const sortedReviewsHistory = useStore((state) => state.locationData?.reviewHistory);
   const currentIndex = useStore((state) => state.currentIndex);
   const locationData = useStore((state) => state.locationData)
   const { reviewsPerPage } = useStore.getState();
   const startIndex = (currentIndex - 1) * reviewsPerPage;
   const endIndex = startIndex + reviewsPerPage;
-  const currentReviewPage = sortedReviewsHistory.slice(startIndex, endIndex);
+  const currentReviewPage = sortedReviewsHistory?.slice(startIndex, endIndex);
 
   const { updateReview, sortReviewHistory } = useStore.getState()
 
@@ -33,7 +31,7 @@ const ReviewHistory = () => {
  
   return (
     <div className="space-y-6">
-      {locationData && sortedReviewsHistory.length > 0 ? (
+      {locationData && sortedReviewsHistory && sortedReviewsHistory.length > 0 ? (
         <div>
           {locationData.isNearby && <NearbyLocation></NearbyLocation>}
           <h2 className="text-2xl font-semibold"> {locationData?.geolocation.formatted_address}</h2>
@@ -57,7 +55,7 @@ const ReviewHistory = () => {
           <PaginationControls></PaginationControls>
 
 
-          {currentReviewPage.map((reviewData, index) => (
+          {currentReviewPage?.map((reviewData, index) => (
             <div key={index} className="review-item bg-white p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow m-4">
               <h3 className="text-lg font-medium text-blue-600" >{reviewData.createdAt}</h3>
               <h3 className="text-lg font-medium text-blue-600" >Review:</h3>
