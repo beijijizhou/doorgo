@@ -13,7 +13,8 @@ const frontenDomain = 'https://doorgo.vercel.app'
 const backendDomain = "https://doorgo.onrender.com"
 const corsOptions = {
   origin: [local, frontenDomain,backendDomain], // Multiple allowed origins
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Adjust methods as needed
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+  allowedHeaders: ['Content-Type', 'Authorization'],// Adjust methods as needed
 };
 app.use(cors(corsOptions));
 
