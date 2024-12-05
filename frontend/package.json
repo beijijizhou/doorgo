@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p $PORT",
     "lint": "next lint"
   },
   "dependencies": {
@@ -14,9 +14,7 @@
     "axios": "^1.7.7",
     "cypress": "^13.15.2",
     "faker": "^6.6.6",
-    "zustand": "^5.0.1"
-  },
-  "devDependencies": {
+    "zustand": "^5.0.1",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
