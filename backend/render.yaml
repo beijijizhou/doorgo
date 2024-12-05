@@ -1,8 +1,0 @@
-services:
-  - type: web
-    name: backend
-    env: node
-    buildCommand: 'npm install'  # Or use your preferred command
-    startCommand: 'nodemon index.ts'    # Or use your preferred start command
-    rootDirectory: backend
-    plan: free
