@@ -47,6 +47,7 @@ export const saveReview = async (req: Request, res: Response) => {
 };
 
 export const fetchReviewHistory = async (req: Request, res: Response) => {
+  console.log("fetch")
   try {
     const { geolocation } = req.body;
     const { coordinates } = geolocation.geoCoordinates
