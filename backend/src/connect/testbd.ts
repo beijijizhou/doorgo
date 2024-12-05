@@ -2,13 +2,14 @@ import mongoose from 'mongoose';
 import { faker } from '@faker-js/faker';
 import Location from './../location/location.model'; // Adjust to your schema path
 import Review from './../review/review.model';
-import { DB_URL } from './mongodb';
+
 import { distance, latlng, reverse } from '../util/map';
+import { connectDB } from './mongodb';
 const testCoordinate: latlng = [40.7178742, -74.0117827]; // BMCC
 
 
 const seedDatabase = async () => {
-    await mongoose.connect(DB_URL); // Adjust to your connection string
+    await connectDB() // Adjust to your connection string
 
     // Clear existing data
     await Location.deleteMany({});
