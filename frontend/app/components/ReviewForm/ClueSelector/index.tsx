@@ -2,11 +2,11 @@
 "use client"
 import React, { useState } from 'react';
 import { predefinedClues } from '../interfaces';
-import { sendReview } from '@/app/api/review/reviewAPI';
 import useStore from '@/app/store';
 import { ReviewData } from '@/app/store/interfaces';
 export default function ClueSelector() {
-    const { geolocation} = useStore.getState();
+    const { geolocation, setNewReview} = useStore.getState();
+    
     const [selectedClues, setSelectedClues] = useState<string[]>([]);
     const [additionalDescriptions, setAdditionalDescriptions] = useState<{ [key: string]: string }>({});
     const [review, setReview] = useState<string>("");
@@ -45,16 +45,15 @@ export default function ClueSelector() {
     // Handle form submission
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
         event.preventDefault();
-
-
-        // Prepare the data to send to the backend
+       
         const newReview: ReviewData = {
             clueDescriptions: additionalDescriptions,
             review,
             likes: 0,
         };
         
-        await sendReview(geolocation!, newReview);
+       
+       setNewReview(newReview);
         // Send the data to the backend
     };
 

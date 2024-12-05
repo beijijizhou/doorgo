@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useMap, useMapsLibrary, AdvancedMarker } from "@vis.gl/react-google-maps";
 import useStore from "../../store";
-import { Geolocation } from "@/app/store/interfaces";
+import {  Geolocation } from "@/app/store/interfaces";
 export default function Userinput() {
   const { setDestination, setMap,setShowReviewHistory } = useStore.getState();
   const destinationData = useStore((state) => state.locationData);
@@ -150,12 +150,12 @@ export default function Userinput() {
           Get Reviews
         </button>
 
-        <button
+        {newGeolocation &&<button
           onClick={() => handleAdd()}
           className="px-4 py-2 text-white bg-blue-400 hover:bg-blue-500 border-none cursor-pointer transition-colors duration-300"
         >
           Add Review
-        </button>
+        </button>}
       </div>
       <div>
 

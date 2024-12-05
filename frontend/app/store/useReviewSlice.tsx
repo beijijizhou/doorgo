@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { StateCreator } from 'zustand';
-import { LocationData, Geolocation, ReviewData, LocationDataAPI, geolocation } from './interfaces';
-import { fetchReviewHistory, updateReview } from '../api/review/reviewAPI';
+import { LocationData, Geolocation, ReviewData,  geolocation } from './interfaces';
+import { fetchReviewHistory, updateReview, sendReview} from '../api/review/reviewAPI';
 import { MapSlice } from './useMapSlice';
 
 
@@ -9,19 +9,20 @@ import { MapSlice } from './useMapSlice';
 const defaultDestinationData: LocationData = {
     geolocation,
     reviewHistory: [],
-    
+
 }
 export interface ReviewSlice {
     geolocation: Geolocation | null;
-    locationData: LocationData | null ;
+    locationData: LocationData | null;
     currentIndex: number; // Index for pagination
     reviewsPerPage: number;
-    showReviewHistory:boolean;
+    showReviewHistory: boolean;
     setCurrentIndex: (index: number) => void;
     setDestination: (newDestination: Geolocation) => void;
     updateReview: (review: ReviewData) => void;
     sortReviewHistory: (criteria: "default" | "likes" | "time") => void;
-    setShowReviewHistory:() => void;
+    setShowReviewHistory: () => void;
+    setNewReview: (review: ReviewData) => void;
 }
 
 export const createReviewSlice: StateCreator<ReviewSlice & MapSlice, [], [], ReviewSlice> = (set, get) => ({
@@ -29,11 +30,16 @@ export const createReviewSlice: StateCreator<ReviewSlice & MapSlice, [], [], Rev
     locationData: defaultDestinationData,
     currentIndex: 1, // Start at the first page
     reviewsPerPage: 5,
-    showReviewHistory:true,
+    showReviewHistory: true,
     setCurrentIndex: (index) => set({ currentIndex: index }),
-    setShowReviewHistory: () => set((state) => (
-        
-        { showReviewHistory: !state.showReviewHistory })),
+    setShowReviewHistory: () => set((state) => ({ showReviewHistory: !state.showReviewHistory })),
+
+    setNewReview: async (review: ReviewData) => {
+        const {setDestination} = get()
+        sendReview(geolocation,review);
+        setDestination(geolocation)
+        console.log("update")
+    },
     setDestination: async (newGeolocation: Geolocation) => {
         const map = get().map; // Access map from combined store
         if (map) {
@@ -42,13 +48,10 @@ export const createReviewSlice: StateCreator<ReviewSlice & MapSlice, [], [], Rev
                 lng: newGeolocation.geoCoordinates.coordinates[0],
             });
         }
-
-        const data: LocationData|null = await fetchReviewHistory(newGeolocation);
+        const data: LocationData | null = await fetchReviewHistory(newGeolocation);
         // console.log(data.locationData.geolocation, newGeolocation)
-        
-        
         set({
-            showReviewHistory:true,
+            showReviewHistory: true,
             geolocation: newGeolocation,
             locationData: data,
         });
