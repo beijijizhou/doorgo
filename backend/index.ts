@@ -16,7 +16,7 @@ const corsOptions = {
   methods: ['GET', 'POST', 'PUT', 'DELETE'], 
   allowedHeaders: ['Content-Type', 'Authorization'],// Adjust methods as needed
 };
-app.use(cors(corsOptions));
+app.use(cors());
 
 
 app.use('/review', reviewRoutes);
