@@ -1,11 +1,15 @@
-import axios from 'axios';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import axios, { AxiosResponse } from 'axios';
 // import { LocationType } from '@/app/components/MapService/interfaces';
 import { apiRoutes } from '../../utils/routes';
 import { LocationData, Geolocation, ReviewData, } from '@/app/store/interfaces';
 
 export const sendReview = async (geolocation: Geolocation, reviewData: ReviewData) => {
+   
     const response = await axios.post(`${apiRoutes.SEND_REVIEW}/`, { geolocation, reviewData });
-    return response.data;
+    
+    return parseLocationData(response);
 };
 
 export const fetchReviewHistory = async (newGeolocation: Geolocation) => {
@@ -17,26 +21,11 @@ export const fetchReviewHistory = async (newGeolocation: Geolocation) => {
         if (response.status === 204) {
             // Handle 204 No Content response
             // Update your UI to inform the user that no locations were found
-            alert('No nearby locations found');
+            // alert('No nearby locations found');
             return null;
         }
-        const { isNearby } = response.data;
-        const newLocationData = response.data.locationData
-        const { formatted_address, geoCoordinates, name, place_id, reviewHistory } = newLocationData;
-
-        const geolocation: Geolocation = {
-            geoCoordinates,
-            formatted_address,
-            name,
-            place_id,
-        };
-        const locationData: LocationData = {
-            geolocation,
-            reviewHistory,
-            isNearby,
-        }
-
-        return locationData
+        
+        return parseLocationData(response)
 
     } catch (error) {
         console.timeEnd("fetchReviewHistory"); // Ensure the timer ends even if there's an error
@@ -52,3 +41,23 @@ export const updateReview = async (reviewData: ReviewData) => {
     return response.data;
 };
 
+function parseLocationData(response: AxiosResponse<any, any>): LocationData {
+    const newLocationData = response.data.locationData;
+    const { isNearby} = response.data;
+    const { formatted_address, geoCoordinates, name, place_id, reviewHistory } = newLocationData;
+    
+    const geolocation: Geolocation = {
+        geoCoordinates,
+        formatted_address,
+        name,
+        place_id,
+    };
+
+    const locationData: LocationData = {
+        geolocation,
+        reviewHistory,
+        isNearby,
+    };
+
+    return locationData;
+}

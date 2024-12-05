@@ -1,16 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { StateCreator } from 'zustand';
-import { LocationData, Geolocation, ReviewData,  geolocation } from './interfaces';
-import { fetchReviewHistory, updateReview, sendReview} from '../api/review/reviewAPI';
+import { LocationData, Geolocation, ReviewData } from './interfaces';
+import { fetchReviewHistory, updateReview, sendReview } from '../api/review/reviewAPI';
 import { MapSlice } from './useMapSlice';
 
 
 
-const defaultDestinationData: LocationData = {
-    geolocation,
-    reviewHistory: [],
 
-}
 export interface ReviewSlice {
     geolocation: Geolocation | null;
     locationData: LocationData | null;
@@ -27,7 +23,7 @@ export interface ReviewSlice {
 
 export const createReviewSlice: StateCreator<ReviewSlice & MapSlice, [], [], ReviewSlice> = (set, get) => ({
     geolocation: null,
-    locationData: defaultDestinationData,
+    locationData: null,
     currentIndex: 1, // Start at the first page
     reviewsPerPage: 5,
     showReviewHistory: true,
@@ -35,13 +31,17 @@ export const createReviewSlice: StateCreator<ReviewSlice & MapSlice, [], [], Rev
     setShowReviewHistory: () => set((state) => ({ showReviewHistory: !state.showReviewHistory })),
 
     setNewReview: async (review: ReviewData) => {
-        const {setDestination} = get()
-        sendReview(geolocation,review);
-        setDestination(geolocation)
-        console.log("update")
+        const { geolocation } = get();
+        const data: LocationData = await sendReview(geolocation!, review);
+        console.log(data)
+        set({
+            showReviewHistory: true,
+            locationData: data,
+        });
+
     },
     setDestination: async (newGeolocation: Geolocation) => {
-        const map = get().map; // Access map from combined store
+        const { map, geolocation } = get(); // Access map from combined store
         if (map) {
             map.setCenter({
                 lat: newGeolocation.geoCoordinates.coordinates[1],
@@ -49,7 +49,7 @@ export const createReviewSlice: StateCreator<ReviewSlice & MapSlice, [], [], Rev
             });
         }
         const data: LocationData | null = await fetchReviewHistory(newGeolocation);
-        // console.log(data.locationData.geolocation, newGeolocation)
+        
         set({
             showReviewHistory: true,
             geolocation: newGeolocation,

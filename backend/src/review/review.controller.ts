@@ -7,7 +7,7 @@ export const saveReview = async (req: Request, res: Response) => {
   const { geolocation, reviewData } = req.body;
   const { coordinates } = geolocation.geoCoordinates
 
-  
+  console.log(geolocation)
   const { clueDescriptions, review } = reviewData;
   try {
     // Create a new review document
@@ -34,11 +34,11 @@ export const saveReview = async (req: Request, res: Response) => {
         reviewHistory: [newReview._id],
       });
     }
-    
+    locationDoc = await Location.findById(locationDoc._id).populate('reviewHistory');
+
     res.status(201).json({
       message: 'Review saved successfully',
-      review: newReview,
-      location: locationDoc,
+      locationData: locationDoc,
     });
   } catch (error) {
     console.error('Error saving review:', error);
