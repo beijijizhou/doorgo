@@ -1,5 +1,9 @@
 // Define base API URL
-const BASE_URL = 'http://localhost:8000';
+
+const BASE_URL =
+  process.env.NEXT_PUBLIC_URL || 'http://localhost:8000';
+
+console.log(`Using BASE_URL: ${BASE_URL}`);
 
 // Define routes for 'review' resources
 const reviewRoutes = {
@@ -13,6 +17,7 @@ const createRoute = (base: string, endpoint: string) => `${base}/review/${endpoi
 
 // Define apiRoutes dynamically using `Object.entries()`
 export const apiRoutes = Object.fromEntries(
+  
   Object.entries(reviewRoutes).map(([key, endpoint]) => [
     key,
     createRoute(BASE_URL, endpoint)
