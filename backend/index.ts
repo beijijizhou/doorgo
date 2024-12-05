@@ -8,7 +8,13 @@ import { reviewRoutes } from './src/review/review.routes';
 import { connectDB } from './src/connect/mongodb';
 app.use(express.json());
 app.use(bodyParser.json());
-app.use(cors({ origin: 'http://localhost:3000' }))
+const local = 'http://localhost:3000'
+const domain = 'https://doorgo.vercel.app'
+const corsOptions = {
+  origin: [local, domain], // Multiple allowed origins
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Adjust methods as needed
+};
+app.use(cors(corsOptions));
 
 
 app.use('/review', reviewRoutes);
