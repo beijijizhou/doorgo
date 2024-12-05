@@ -22,5 +22,9 @@ app.use('/review', reviewRoutes);
 
 connectDB();
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  if (process.env.NODE_ENV === 'production') {
+    console.log(`Server is running in production on ${backendDomain}`);
+  } else {
+    console.log(`Server is running on http://localhost:${PORT}`);
+  }
 });
