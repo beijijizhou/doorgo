@@ -16,8 +16,6 @@ export default function MapService() {
     lat: 40.7128,
     lng: -74.0060
   };
-  console.log("updated")
-  console.log(API_KEY)
   return (
     <div >
       {defaultLocation && <APIProvider apiKey={API_KEY as string}>
