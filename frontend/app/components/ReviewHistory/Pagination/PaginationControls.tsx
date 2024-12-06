@@ -8,10 +8,17 @@ export default function PaginationControls() {
     // const currentReviewPage = sortedReviewsHistory.slice(currentIndex - 1, currentIndex);
     const { reviewsPerPage } = useStore.getState();
     const totalPages = Math.ceil(sortedReviewsHistory.length / reviewsPerPage);
-
+    
     const generatePageNumbers = () => {
         const pages: (number | string)[] = [];
-
+        const MAX_VISIBLE_PAGES = 5;
+        if(totalPages <= MAX_VISIBLE_PAGES){
+            for(let i = 1; i <= totalPages; i++){
+                pages.push(i);
+            }
+            return pages
+        }
+        
         if (currentIndex <= 2) {
             // Case 1: At the start
             pages.push(1, 2, 3, '...', totalPages - 1, totalPages);

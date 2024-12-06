@@ -7,7 +7,6 @@ export const saveReview = async (req: Request, res: Response) => {
   const { geolocation, reviewData } = req.body;
   const { coordinates } = geolocation.geoCoordinates
 
-  console.log(geolocation)
   const { clueDescriptions, review } = reviewData;
   try {
     // Create a new review document
