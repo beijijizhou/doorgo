@@ -8,20 +8,21 @@ import { reviewRoutes } from './src/review/review.routes';
 import { connectDB } from './src/connect/mongodb';
 app.use(express.json());
 app.use(bodyParser.json());
-const local = 'http://localhost:3000'
-const frontenDomain = 'https://doorgo.vercel.app'
-const backendDomain = "https://doorgo.onrender.com"
-const corsOptions = {
-  origin: [local, frontenDomain,backendDomain], // Multiple allowed origins
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
-  allowedHeaders: ['Content-Type', 'Authorization'],// Adjust methods as needed
-};
 app.use(cors());
-
-
 app.use('/review', reviewRoutes);
-
 connectDB();
+const backendDomain = "https://doorgo.onrender.com"
+// const corsOptions = {
+//   origin: [local, frontenDomain,backendDomain], // Multiple allowed origins
+//   methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+//   allowedHeaders: ['Content-Type', 'Authorization'],// Adjust methods as needed
+// };
+
+
+
+
+
+
 app.listen(PORT, () => {
   
   if (process.env.NODE_ENV === 'production') {
