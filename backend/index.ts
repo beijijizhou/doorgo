@@ -1,6 +1,5 @@
-
-import express from 'express';
-const app = express();
+import express, { Application, Request, Response } from 'express';
+const app: Application = express();
 const PORT = process.env.PORT || 8000;
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -9,6 +8,7 @@ import { connectDB } from './src/connect/mongodb';
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(cors());
+
 app.use('/review', reviewRoutes);
 connectDB();
 const backendDomain = "https://doorgo.onrender.com"
@@ -19,7 +19,7 @@ const backendDomain = "https://doorgo.onrender.com"
 // };
 
 
-
+app.get("/", (req: Request, res: Response) => { res.send("welcome"); });
 
 
 
