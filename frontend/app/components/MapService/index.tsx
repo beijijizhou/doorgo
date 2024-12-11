@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 import { APIProvider, Map, } from '@vis.gl/react-google-maps';
 import React from 'react'

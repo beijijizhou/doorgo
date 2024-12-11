@@ -3,9 +3,10 @@
 import React, { useEffect, useState } from "react";
 import { useMap, useMapsLibrary, AdvancedMarker } from "@vis.gl/react-google-maps";
 import useStore from "../../store";
-import {  Geolocation } from "@/app/store/interfaces";
+import { Geolocation } from "@/app/store/interfaces";
+import GoogleNavigationButton from "../GoogleNavigationButton";
 export default function Userinput() {
-  const { setDestination, setMap,setShowReviewHistory } = useStore.getState();
+  const { setDestination, setMap, setShowReviewHistory } = useStore.getState();
   const destinationData = useStore((state) => state.locationData);
   const newGeolocation = useStore((state) => state.geolocation);
   const [inputValue, setInputValue] = useState("");
@@ -145,15 +146,13 @@ export default function Userinput() {
       <div className="flex justify-center space-x-4">
         <button
           onClick={() => handleSearch()}
-          className="px-4 py-2 text-white bg-blue-400 hover:bg-blue-500 border-none cursor-pointer transition-colors duration-300"
-        >
+          className='btn-primary'        >
           Get Reviews
         </button>
-
-        {newGeolocation &&<button
+        <GoogleNavigationButton></GoogleNavigationButton>
+        {newGeolocation && <button
           onClick={() => handleAdd()}
-          className="px-4 py-2 text-white bg-blue-400 hover:bg-blue-500 border-none cursor-pointer transition-colors duration-300"
-        >
+          className='btn-primary'        >
           Add Review
         </button>}
       </div>
