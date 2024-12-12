@@ -13,7 +13,9 @@ const locationSchema = new Schema({
       required: true,
     },
   },
-  formatted_address: { type: String, required: true },
+
+  subtype: { type: String, required: false },
+  formatted_address: { type: String, required: false },
   name: { type: String, required: false },
   place_id: { type: String, required: false },
   reviewHistory: [{ type: Schema.Types.ObjectId, ref: 'Review' }], // Array of ObjectId references to Review
