@@ -43,6 +43,7 @@ export const updateReview = async (reviewData: ReviewData) => {
 
 function parseLocationData(response: AxiosResponse<any, any>): LocationData {
     const newLocationData = response.data.locationData;
+    console.log(newLocationData)
     const { isNearby} = response.data;
     const { formatted_address, geoCoordinates, name, place_id, reviewHistory } = newLocationData;
     

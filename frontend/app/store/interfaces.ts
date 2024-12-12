@@ -6,19 +6,20 @@ export interface Geolocation {
     formatted_address: string;
     name?: string;
     place_id?: string;
+    subtype?: string;
 }
 
 export interface LocationData {
     geolocation: Geolocation,
     reviewHistory: ReviewData[]
-    isNearby?:boolean,
+    isNearby?: boolean,
 }
 export interface ReviewData {
     clueDescriptions: { [key: string]: string }; // Object with clues as keys and descriptions as values
     review: string;
     likes: number | 0,
     _id?: string,
-    createdAt?: string; 
+    createdAt?: string;
 }
 
 export interface LocationDataAPI {
@@ -26,7 +27,7 @@ export interface LocationDataAPI {
     isNearby: boolean,
 }
 
-export const geolocation:Geolocation = {
+export const geolocation: Geolocation = {
     geoCoordinates: {
         type: "Point",
         coordinates: [-73.9553663, 40.7656066], // [longitude, latitude]
