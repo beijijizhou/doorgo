@@ -14,10 +14,7 @@ const locationSchema = new Schema({
     },
   },
 
-  subtype: { type: String, required: false },
-  formatted_address: { type: String, required: false },
-  name: { type: String, required: false },
-  place_id: { type: String, required: false },
+  doorType: { type: String, required: false },
   reviewHistory: [{ type: Schema.Types.ObjectId, ref: 'Review' }], // Array of ObjectId references to Review
   reverseGeocoding: { type: Schema.Types.ObjectId, ref: 'ReverseGeocodingResponse' }, // Embedding Reverse Geocoding Response
 

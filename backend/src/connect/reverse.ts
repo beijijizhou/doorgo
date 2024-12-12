@@ -12,11 +12,11 @@ const convert = async () => {
     await ReverseGeocodingResponse.deleteMany({});
     try {
         // Find all documents in the DoorfrontData collection
-        const doorfrontData = await mongoose.connection.db!.collection('doorfront').find().toArray();
+        const doorfrontDataArray = await mongoose.connection.db!.collection('doorfront').find().toArray();
         // const partData = doorfrontData.slice(0,1)
         // Iterate over each document
-        for (const data of doorfrontData) {
-            const { coordinates } = data.geoCoordinates;
+        for (const doorfrontData of doorfrontDataArray) {
+            const { coordinates } = doorfrontData.geoCoordinates;
 
             // Fetch the formatted address using reverse geocoding
             const geoResponse = await axios.get(REVERSE_GEOCODING_URL, {
@@ -29,23 +29,33 @@ const convert = async () => {
             });
 
             const reverseGeodingData = geoResponse.data
-            const savedReverseGeocoding = await new ReverseGeocodingResponse(reverseGeodingData).save();
-            // console.log(savedReverseGeocoding)
-            // Create a new Location document
-            const newLocation = new Location({
-                geoCoordinates: data.geoCoordinates,
-                reviewHistory: [],
-                doorType: reverseGeodingData.subtype,
-                reverseGeocoding: savedReverseGeocoding._id,
-            });
+            try {
+                const savedReverseGeocoding = await new ReverseGeocodingResponse(reverseGeodingData).save();
+                // console.log(savedReverseGeocoding)
+                // Create a new Location document
+                const newLocation = new Location({
+                    geoCoordinates: doorfrontData.geoCoordinates,
+                    reviewHistory: [],
+                    doorType: doorfrontData.subtype,
+                    reverseGeocoding: savedReverseGeocoding._id,
+                });
 
-            // Save the new Location document
-            await newLocation.save();
+                // Save the new Location document
+                await newLocation.save();
+            } catch (error) {
+                console.error('Error saving reverse geocoding data, skipping this entry:', error);
+                // Optionally log the data that caused the failure
+                console.log('Failed doorfrontData:', doorfrontData);
+                // Continue to the next data entry
+                continue;
+            }
+
         }
 
         console.log('GeoCoordinates and addresses copied successfully!');
     } catch (error) {
         console.error('Error during conversion:', error);
+
     } finally {
         mongoose.connection.close();
     }

@@ -23,6 +23,7 @@ interface BoundingBox {
 
 interface ReverseGeocodingResponseType extends Document {
   place_id: number;
+
   osm_type: string;
   osm_id: number;
   lat: string;
@@ -59,8 +60,7 @@ const BoundingBoxSchema: Schema = new Schema({
 });
 
 const ReverseGeocodingResponseSchema: Schema = new Schema({
-  place_id: { type: Number, required: false },
-  licence: { type: String, required: true },
+  place_id: { type: Number, required: true },
   osm_type: { type: String, required: true },
   osm_id: { type: Number, required: true },
   lat: { type: String, required: true },
