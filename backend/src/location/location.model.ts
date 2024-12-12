@@ -19,6 +19,8 @@ const locationSchema = new Schema({
   name: { type: String, required: false },
   place_id: { type: String, required: false },
   reviewHistory: [{ type: Schema.Types.ObjectId, ref: 'Review' }], // Array of ObjectId references to Review
+  reverseGeocoding: { type: Schema.Types.ObjectId, ref: 'ReverseGeocodingResponse' }, // Embedding Reverse Geocoding Response
+
 });
 locationSchema.index({ geoCoordinates: '2dsphere' });
 // Create the Location model
