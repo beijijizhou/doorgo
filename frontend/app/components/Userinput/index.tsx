@@ -76,6 +76,8 @@ export default function Userinput() {
     placesService?.textSearch(request, async (results, status) => {
       if (status === google.maps.places.PlacesServiceStatus.OK) {
         const result = results![0];
+        const  coordinates = [result.geometry!.location!.lng(), result.geometry!.location!.lat()]; // [longitude, latitude]
+        console.log(coordinates)
         console.log(result)
         const newDestination: Geolocation = {
           geoCoordinates: {

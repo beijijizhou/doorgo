@@ -90,7 +90,4 @@ const ReverseGeocodingResponse = mongoose.model<ReverseGeocodingResponseType>('R
 
 export default ReverseGeocodingResponse;
 
-// export default mongoose.model<ReverseGeocodingResponseType>(
-//   'ReverseGeocodingResponse',
-//   ReverseGeocodingResponseSchema
-// );
+

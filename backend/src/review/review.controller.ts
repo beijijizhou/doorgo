@@ -50,11 +50,14 @@ export const fetchReviewHistory = async (req: Request, res: Response) => {
   try {
     const { geolocation } = req.body;
     const { coordinates } = geolocation.geoCoordinates
+    console.log(coordinates)
     let locationDoc = await Location.findOne({
       "geoCoordinates.coordinates": coordinates, // Update to match the coordinates schema
     }).populate('reviewHistory');
     console.log("find exaction location", locationDoc);
-
+    -74.01410295165462
+1
+40.71538502518268
     let isNearby = false;
     if (!locationDoc) {
       const nearbyLocations = await findLocationByProximity(coordinates);

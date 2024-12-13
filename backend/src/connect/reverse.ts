@@ -38,6 +38,8 @@ const convert = async () => {
                     reviewHistory: [],
                     doorType: doorfrontData.subtype,
                     reverseGeocoding: savedReverseGeocoding._id,
+                    // formatted_address: savedReverseGeocoding.display_name,
+                    // name: savedReverseGeocoding.name
                 });
 
                 // Save the new Location document

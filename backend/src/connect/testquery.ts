@@ -2,7 +2,6 @@ import axios from 'axios';
 
 // Define the reverse geocoding URL
 const REVERSE_GEOCODING_URL = 'http://localhost:8080/reverse';
-import ReverseGeocodingResponse from '../Nominatim/reverse.model';
 
 // Define a function to handle the reverse geocoding request
 const reverseGeocode = async (lat: number, lon: number): Promise<void> => {
@@ -33,8 +32,10 @@ const reverseGeocode = async (lat: number, lon: number): Promise<void> => {
 };
 
 
-const lat = 40.7580;
-const lon = -73.9855;
+
+const lat = 40.71538502518268
+const lon = -74.01410295165462
+
 
 // Call the reverse geocode function
 reverseGeocode(lat, lon);
