@@ -17,6 +17,9 @@
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.1",
     "@types/pg": "^8.11.10",
+    "@universe/address-parser": "^4.0.0",
+    "addresser": "^1.1.20",
+    "addressit": "^1.8.2",
     "axios": "^1.7.9",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
@@ -24,9 +27,13 @@
     "express": "^4.21.1",
     "faker": "^6.6.6",
     "mongoose": "^8.8.1",
+    "node-postal": "^1.2.0",
     "nodemon": "^3.1.7",
     "pg": "^8.13.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
+  },
+  "devDependencies": {
+    "@types/node-postal": "^1.1.3"
   }
 }

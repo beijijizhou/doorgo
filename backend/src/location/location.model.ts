@@ -1,5 +1,7 @@
-import mongoose, { Schema } from 'mongoose';
+// import { LocationType } from '@/app/components/MapService/interfaces';
+import mongoose, { Schema, Types} from 'mongoose';
 // LocationType Schema
+
 const locationSchema = new Schema({
   geoCoordinates: {
     type: {
@@ -24,7 +26,9 @@ const locationSchema = new Schema({
 locationSchema.index({ geoCoordinates: '2dsphere' });
 // Create the Location model
 const Location = mongoose.model('Location', locationSchema);
-// Add this line to create a 2dsphere index on geoCoordinates
+// Add this line to create a 2dsphere index on geoCoordinatesexport interface LocationType {
+
+  
 
 
 export default Location;

@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker';
 import Location from './../location/location.model'; // Adjust to your schema path
 import Review from './../review/review.model';
 
-import { distance, latlng, reverse } from '../util/map';
+import { distance, latlng, reverse } from '../util/mapHelper';
 import { connectDB } from './mongodb';
 const testCoordinate: latlng = [40.7178742, -74.0117827]; // BMCC
 

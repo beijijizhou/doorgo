@@ -6,10 +6,12 @@ import { ReviewData } from "@/app/store/interfaces";
 import { sortOptions } from "./interfaces";
 import PaginationControls from "./Pagination/PaginationControls";
 import NearbyLocation from "./NearbyLocation";
+import { LocationHeader } from "./LocationHeader";
 const ReviewHistory = () => {
   const sortedReviewsHistory = useStore((state) => state.locationData?.reviewHistory);
   const currentIndex = useStore((state) => state.currentIndex);
   const locationData = useStore((state) => state.locationData)
+
   const { reviewsPerPage } = useStore.getState();
   const startIndex = (currentIndex - 1) * reviewsPerPage;
   const endIndex = startIndex + reviewsPerPage;
@@ -28,12 +30,16 @@ const ReviewHistory = () => {
     sortReviewHistory(selectedSort); // Sort reviews in the store
   };
   // console.log(locationData?.isNearby)
- 
+  
+  
+  
   return (
     <div className="space-y-6">
+      {/* <Locarion></Locarion> */}
+      <LocationHeader></LocationHeader>
       {locationData && sortedReviewsHistory && sortedReviewsHistory.length > 0 ? (
         <div>
-          {locationData.isNearby && <NearbyLocation></NearbyLocation>}
+          {/* {locationData.isNearby && } */}
           <h2 className="text-2xl font-semibold"> {locationData?.geolocation.formatted_address}</h2>
 
           <h2 className="text-2xl font-semibold">{sortedReviewsHistory.length} Reviews</h2>

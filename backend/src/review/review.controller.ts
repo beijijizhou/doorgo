@@ -1,7 +1,10 @@
+// import { LocationType } from '@/app/components/MapService/interfaces';
+// import { Geolocation } from '@/app/store/interfaces';
 import { Request, Response } from 'express';
 import Review from './review.model'; // Import Review model
 import Location from '../location/location.model'; // Import Location model
-import { distance, latlng, lnglat, reverse } from '../util/map';
+import { distance, latlng, lnglat, normalizeAddress, reverse } from '../util/mapHelper';
+import { User, GeolocationType } from "../../../shared/interface"
 
 export const saveReview = async (req: Request, res: Response) => {
   const { geolocation, reviewData } = req.body;
@@ -47,29 +50,29 @@ export const saveReview = async (req: Request, res: Response) => {
 
 export const fetchReviewHistory = async (req: Request, res: Response) => {
   console.log("fetch")
+
   try {
     const { geolocation } = req.body;
     const { coordinates } = geolocation.geoCoordinates
-    console.log(coordinates)
+    const { formatted_address } = geolocation
+    // console.log(coordinates, formatted_address)
     let locationDoc = await Location.findOne({
       "geoCoordinates.coordinates": coordinates, // Update to match the coordinates schema
     }).populate('reviewHistory');
     console.log("find exaction location", locationDoc);
-    -74.01410295165462
-1
-40.71538502518268
+
     let isNearby = false;
     if (!locationDoc) {
-      const nearbyLocations = await findLocationByProximity(coordinates);
+      const nearbyLocations = await findLocationByProximity(coordinates, formatted_address);
       if (!nearbyLocations.length) {
         res.status(204).json({ message: 'No nearby locations found' });
         return;
       }
-
+      // filterLocation(formatted_address, nearbyLocations)
       isNearby = !isNearby,
-      // console.log(nearbyLocations[0].reviewHistory)
-      
-      res.status(200).json({ locationData: nearbyLocations[0], isNearby });
+        // console.log(nearbyLocations[0].reviewHistory)
+
+        res.status(200).json({ locationData: nearbyLocations[0], isNearby });
       return
     }
     // Return the reviews associated with the location
@@ -80,7 +83,7 @@ export const fetchReviewHistory = async (req: Request, res: Response) => {
   }
 };
 
-export const findLocationByProximity = async (coordinates: lnglat) => {
+export const findLocationByProximity = async (coordinates: lnglat, formatted_address: string) => {
   try {
     const query = {
       geoCoordinates: {
@@ -89,21 +92,30 @@ export const findLocationByProximity = async (coordinates: lnglat) => {
             type: 'Point',
             coordinates: coordinates,
           },
-          $maxDistance: 10, // Adjust this distance (in meters) as needed
+          $maxDistance: 100, // Adjust this distance (in meters) as needed
         },
       },
     };
 
     // Find and return up to 5 nearby locations
-    const results = await Location.find(query).limit(1).populate("reviewHistory");
-
+    const results = await Location.find(query).limit(10).populate("reviewHistory");
+    console.log("input", coordinates)
     const resultsWithDistance = results.map(location => {
-      // console.log(results)
-      // console.log(reverse(coordinates), reverse(location!.geoCoordinates!.coordinates as lnglat))
-      const geoDistance = distance(reverse(coordinates), reverse(location!.geoCoordinates!.coordinates as lnglat));
-      // console.log(geoDistance)
-      return { ...location.toObject(), geoDistance };
-    });
+        // Normalize the addresses
+        const normalizedLocationAddress = normalizeAddress(location!.formatted_address!);
+        const normalizedInputAddress = normalizeAddress(formatted_address);
+
+        // Calculate the geoDistance
+        const geoDistance = distance(reverse(coordinates), reverse(location!.geoCoordinates!.coordinates as lnglat));
+        console.log(geoDistance)
+        // Only return the location if the normalized addresses match
+        // if (normalizedLocationAddress === normalizedInputAddress) {
+         
+        // }
+
+        // If the addresses don't match, return null or skip it
+        return { ...location.toObject(), geoDistance };
+      }).filter(location => location !== null);
     // console.log(resultsWithDistance[0].reviewHistory)
     return resultsWithDistance;
   } catch (error) {
@@ -111,6 +123,8 @@ export const findLocationByProximity = async (coordinates: lnglat) => {
     return [];
   }
 };
+
+
 export const updateReview = async (req: Request, res: Response) => {
   try {
     const { reviewData } = req.body;

@@ -6,13 +6,14 @@ export interface Geolocation {
     formatted_address: string;
     name?: string;
     place_id?: string;
-    subtype?: string;
 }
 
 export interface LocationData {
     geolocation: Geolocation,
-    reviewHistory: ReviewData[]
+    reviewHistory: ReviewData[],
     isNearby?: boolean,
+    doorType?: string,
+    geoDistance?: number,
 }
 export interface ReviewData {
     clueDescriptions: { [key: string]: string }; // Object with clues as keys and descriptions as values

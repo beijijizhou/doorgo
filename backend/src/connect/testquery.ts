@@ -33,8 +33,8 @@ const reverseGeocode = async (lat: number, lon: number): Promise<void> => {
 
 
 
-const lat = 40.71538502518268
-const lon = -74.01410295165462
+const lat = 40.7399355
+const lon = -73.99205870000002
 
 
 // Call the reverse geocode function
