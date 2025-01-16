@@ -29,6 +29,7 @@
     "mongoose": "^8.8.1",
     "node-postal": "^1.2.0",
     "nodemon": "^3.1.7",
+    "p-limit": "^6.2.0",
     "pg": "^8.13.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2"

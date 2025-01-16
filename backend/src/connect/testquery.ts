@@ -6,15 +6,13 @@ const REVERSE_GEOCODING_URL = 'http://localhost:8080/reverse';
 // Define a function to handle the reverse geocoding request
 const reverseGeocode = async (lat: number, lon: number): Promise<void> => {
   try {
-    const response = await axios.get(REVERSE_GEOCODING_URL, {
-      params: {
-        lat: lat,
-        lon: lon,
-        format: 'json',
-        addressdetails: 1,
-       
-      },
-    });
+
+    const url = `${REVERSE_GEOCODING_URL}?lat=${lat}&lon=${lon}&format=json&addressdetails=1`;
+
+    console.log('Full Request URL:', url);
+
+    // Now make the request
+    const response = await axios.get(url);
 
     // Extract the display name (formatted address), name, and place_id from the response
     const formattedAddress = response.data?.display_name || 'Not available';
