@@ -84,7 +84,7 @@ const ReverseGeocodingResponseSchema: Schema = new Schema({
     }),
   },
 });
-const ReverseGeocodingResponse = mongoose.model<ReverseGeocodingResponseType>('ReverseGeocodingResponse',ReverseGeocodingResponseSchema);
+const ReverseGeocodingResponse = mongoose.model('ReverseGeocodingResponse',ReverseGeocodingResponseSchema);
 // Add this line to create a 2dsphere index on geoCoordinates
 
 

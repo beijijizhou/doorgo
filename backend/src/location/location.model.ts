@@ -1,7 +1,7 @@
 // import { LocationType } from '@/app/components/MapService/interfaces';
 import mongoose, { Schema, Types} from 'mongoose';
-// LocationType Schema
-
+import ReverseGeocodingResponse from '../Nominatim/reverse.model';
+import Review from '../review/review.model';
 const locationSchema = new Schema({
   geoCoordinates: {
     type: {
@@ -19,8 +19,8 @@ const locationSchema = new Schema({
   doorType: { type: String, required: false },
   formatted_address: { type: String, required: false },
   name: { type: String, required: false },
-  reviewHistory: [{ type: Schema.Types.ObjectId, ref: 'Review' }], // Array of ObjectId references to Review
-  reverseGeocoding: { type: Schema.Types.ObjectId, ref: 'ReverseGeocodingResponse' }, // Embedding Reverse Geocoding Response
+  reviewHistory: [{ type: Schema.Types.ObjectId, ref: Review }], // Array of ObjectId references to Review
+  reverseGeocoding: { type: Schema.Types.ObjectId, ref: ReverseGeocodingResponse }, 
 
 });
 locationSchema.index({ geoCoordinates: '2dsphere' });

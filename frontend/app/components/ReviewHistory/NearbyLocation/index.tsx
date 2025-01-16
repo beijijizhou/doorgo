@@ -16,7 +16,7 @@ export default function NearbyLocation() {
     bounds.extend(new google.maps.LatLng(originCoordinates[1], originCoordinates[0]));
     bounds.extend(new google.maps.LatLng(destCoordinates[1], destCoordinates[0]));
 
-    const margin = 0.005; // Adjust this value to control the padding
+    const margin = 0.00000005; // Adjust this value to control the padding
     const extendedBounds = new google.maps.LatLngBounds(
       new google.maps.LatLng(bounds.getSouthWest().lat() - margin, bounds.getSouthWest().lng() - margin),
       new google.maps.LatLng(bounds.getNorthEast().lat() + margin, bounds.getNorthEast().lng() + margin)
@@ -29,7 +29,7 @@ export default function NearbyLocation() {
   return (
     <div>
       <h1>{locationData!.isNearby}</h1>
-      <AdvancedMarker position={position} >
+      <AdvancedMarker position={position} title={"doorfront"}>
         <Pin background={'#00FF00'} glyphColor={'#333'} borderColor={'#333'} />
       </AdvancedMarker>
     </div>

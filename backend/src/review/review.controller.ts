@@ -4,8 +4,6 @@ import { Request, Response } from 'express';
 import Review from './review.model'; // Import Review model
 import Location from '../location/location.model'; // Import Location model
 import { distance, latlng, lnglat, normalizeAddress, reverse } from '../util/mapHelper';
-import { User, GeolocationType } from "../../../shared/interface"
-
 export const saveReview = async (req: Request, res: Response) => {
   const { geolocation, reviewData } = req.body;
   const { coordinates } = geolocation.geoCoordinates
@@ -98,25 +96,19 @@ export const findLocationByProximity = async (coordinates: lnglat, formatted_add
     };
 
     // Find and return up to 5 nearby locations
-    const results = await Location.find(query).limit(10).populate("reviewHistory");
+    const results = await Location.find(query).limit(10).populate("reverseGeocoding").populate("reviewHistory");
     console.log("input", coordinates)
     const resultsWithDistance = results.map(location => {
-        // Normalize the addresses
-        const normalizedLocationAddress = normalizeAddress(location!.formatted_address!);
-        const normalizedInputAddress = normalizeAddress(formatted_address);
+      // Normalize the addresses
+      // const normalizedLocationAddress = normalizeAddress(location!.formatted_address!);
+      // const normalizedInputAddress = normalizeAddress(formatted_address);
 
-        // Calculate the geoDistance
-        const geoDistance = distance(reverse(coordinates), reverse(location!.geoCoordinates!.coordinates as lnglat));
-        console.log(geoDistance)
-        // Only return the location if the normalized addresses match
-        // if (normalizedLocationAddress === normalizedInputAddress) {
-         
-        // }
-
-        // If the addresses don't match, return null or skip it
-        return { ...location.toObject(), geoDistance };
-      }).filter(location => location !== null);
-    // console.log(resultsWithDistance[0].reviewHistory)
+      // Calculate the geoDistance
+      const geoDistance = distance(reverse(coordinates), reverse(location!.geoCoordinates!.coordinates as lnglat));
+      
+      return { ...location.toObject(), geoDistance };
+    }).filter(location => location !== null);
+    console.log(resultsWithDistance[0])
     return resultsWithDistance;
   } catch (error) {
     console.error('Error in proximity search:', error);

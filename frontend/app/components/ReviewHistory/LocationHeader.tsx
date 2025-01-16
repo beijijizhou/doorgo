@@ -12,7 +12,6 @@ const DisplayDoorType = ({ doorType }: { doorType?: string }) => {
 
 export const LocationHeader = () => {
   const locationData = useStore((state) => state.locationData)
-  console.log(locationData)
   return (
     <div>
       {locationData && <div>
