@@ -11,3 +11,12 @@ const Review = mongoose.model('Review', reviewSchema);
 
 export default Review;
 
+
+export interface ReviewType extends Document {
+  clueDescriptions: Map<string, string>;
+  review: string;
+  likes: number;
+  createdAt: Date; // Automatically added by `{ timestamps: true }`
+  updatedAt: Date; // Automatically added by `{ timestamps: true }`
+}
+

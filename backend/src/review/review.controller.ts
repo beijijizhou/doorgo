@@ -2,8 +2,10 @@
 // import { Geolocation } from '@/app/store/interfaces';
 import { Request, Response } from 'express';
 import Review from './review.model'; // Import Review model
-import Location from '../location/location.model'; // Import Location model
+import Location, { LocationType } from '../location/location.model'; // Import Location model
 import { distance, latlng, lnglat, normalizeAddress, reverse } from '../util/mapHelper';
+import { extractStreetNumber } from '../util';
+import { ReverseGeocodingResponseType } from '../Nominatim/reverse.model';
 export const saveReview = async (req: Request, res: Response) => {
   const { geolocation, reviewData } = req.body;
   const { coordinates } = geolocation.geoCoordinates
@@ -29,7 +31,7 @@ export const saveReview = async (req: Request, res: Response) => {
           type: 'Point',
           coordinates: coordinates,
         },
-        formatted_address: geolocation.formatted_address,
+        nominatim_formatted_address: geolocation.formatted_address,
         name: geolocation.name,
         reviewHistory: [newReview._id],
       });
@@ -47,13 +49,12 @@ export const saveReview = async (req: Request, res: Response) => {
 };
 
 export const fetchReviewHistory = async (req: Request, res: Response) => {
-  console.log("fetch")
+
 
   try {
     const { geolocation } = req.body;
     const { coordinates } = geolocation.geoCoordinates
     const { formatted_address } = geolocation
-    // console.log(coordinates, formatted_address)
     let locationDoc = await Location.findOne({
       "geoCoordinates.coordinates": coordinates, // Update to match the coordinates schema
     }).populate('reviewHistory');
@@ -66,7 +67,6 @@ export const fetchReviewHistory = async (req: Request, res: Response) => {
         res.status(204).json({ message: 'No nearby locations found' });
         return;
       }
-      // filterLocation(formatted_address, nearbyLocations)
       isNearby = !isNearby,
         // console.log(nearbyLocations[0].reviewHistory)
 
@@ -81,7 +81,8 @@ export const fetchReviewHistory = async (req: Request, res: Response) => {
   }
 };
 
-export const findLocationByProximity = async (coordinates: lnglat, formatted_address: string) => {
+export const findLocationByProximity = async (coordinates: lnglat, google_formatted_address: string) => {
+  console.log("nearby search")
   try {
     const query = {
       geoCoordinates: {
@@ -96,19 +97,21 @@ export const findLocationByProximity = async (coordinates: lnglat, formatted_add
     };
 
     // Find and return up to 5 nearby locations
-    const results = await Location.find(query).limit(10).populate("reverseGeocoding").populate("reviewHistory");
-    console.log("input", coordinates)
+    const results = await Location.find(query).limit(10).populate("reviewHistory").populate("reverseGeocoding");
+    const google_street_number = extractStreetNumber(google_formatted_address)
     const resultsWithDistance = results.map(location => {
-      // Normalize the addresses
-      // const normalizedLocationAddress = normalizeAddress(location!.formatted_address!);
-      // const normalizedInputAddress = normalizeAddress(formatted_address);
+      const reverseGeocoding = location.reverseGeocoding as unknown as ReverseGeocodingResponseType;
 
-      // Calculate the geoDistance
-      const geoDistance = distance(reverse(coordinates), reverse(location!.geoCoordinates!.coordinates as lnglat));
-      
-      return { ...location.toObject(), geoDistance };
-    }).filter(location => location !== null);
-    console.log(resultsWithDistance[0])
+      const house_number = reverseGeocoding.address.house_number;
+      if (house_number === google_street_number) {
+        const geoDistance = distance(reverse(coordinates), reverse(location!.geoCoordinates!.coordinates as lnglat));
+        const formatted_address = reverseGeocoding?.display_name
+        const { nominatim_formatted_address, ...rest } = location.toObject();
+
+        return { ...rest, geoDistance, formatted_address };
+      }
+    }).filter(location => location !== undefined);
+    console.log(resultsWithDistance)
     return resultsWithDistance;
   } catch (error) {
     console.error('Error in proximity search:', error);

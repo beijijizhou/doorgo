@@ -21,7 +21,7 @@ interface BoundingBox {
   maxLon: string;
 }
 
-interface ReverseGeocodingResponseType extends Document {
+export interface ReverseGeocodingResponseType extends Document {
   place_id: number;
 
   osm_type: string;
