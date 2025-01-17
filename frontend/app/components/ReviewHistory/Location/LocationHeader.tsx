@@ -14,15 +14,15 @@ export const LocationHeader = () => {
   const locationData = useStore((state) => state.locationData)
   return (
     <div>
-      {locationData && <div>
+      {locationData && 
+      <div>
         <h1 className="text-xl font-bold text-center text-blue-600">
           {locationData.geolocation.formatted_address}
-         
-          </h1>
-          <h1 className="text-xl font-bold text-center text-[#895129]">  GeoDistance: {" " + locationData.geoDistance + " "} meters</h1>
+
+        </h1>
+        <h1 className="text-xl font-bold text-center text-[#895129]">  GeoDistance: {" " + locationData.geoDistance + " "} meters</h1>
         <DisplayDoorType doorType={locationData.doorType} />
         <NearbyLocation />
-       
       </div>}
     </div>
   )

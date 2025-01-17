@@ -31,7 +31,7 @@ export const saveReview = async (req: Request, res: Response) => {
           type: 'Point',
           coordinates: coordinates,
         },
-        nominatim_formatted_address: geolocation.formatted_address,
+        formatted_address: geolocation.formatted_address,
         name: geolocation.name,
         reviewHistory: [newReview._id],
       });
@@ -106,7 +106,7 @@ export const findLocationByProximity = async (coordinates: lnglat, google_format
       if (house_number === google_street_number) {
         const geoDistance = distance(reverse(coordinates), reverse(location!.geoCoordinates!.coordinates as lnglat));
         const formatted_address = reverseGeocoding?.display_name
-        const { nominatim_formatted_address, ...rest } = location.toObject();
+        const { formatted_address: nominatim_formatted_address, ...rest } = location.toObject();
 
         return { ...rest, geoDistance, formatted_address };
       }

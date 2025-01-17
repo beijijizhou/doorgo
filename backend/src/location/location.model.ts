@@ -28,7 +28,7 @@ const locationSchema = new Schema({
   },
 
   doorType: { type: String, required: false },
-  nominatim_formatted_address: { type: String, required: false },
+  formatted_address: { type: String, required: false },
   name: { type: String, required: false },
   reviewHistory: [{ type: Schema.Types.ObjectId, ref: Review }], // Array of ObjectId references to Review
   reverseGeocoding: { type: Schema.Types.ObjectId, ref: ReverseGeocodingResponse },

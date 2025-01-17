@@ -28,7 +28,7 @@ export default function NearbyLocation() {
   changeBounds()
   return (
     <div>
-      <h1>{locationData!.isNearby}</h1>
+      <h1>{locationData!.isNearby} </h1>
       <AdvancedMarker position={position} title={"doorfront"}>
         <Pin background={'#00FF00'} glyphColor={'#333'} borderColor={'#333'} />
       </AdvancedMarker>
